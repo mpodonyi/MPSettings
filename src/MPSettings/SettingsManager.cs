@@ -10,7 +10,7 @@ namespace MPSettings
         public static dynamic GetSettings()
         {
 
-            return new DynamicSettings();
+            return new DynamicSettings(new SettingsImpl());
         }
     }
 }
