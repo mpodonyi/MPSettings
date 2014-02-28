@@ -1,19 +1,42 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
+using MPSettings.YamlProvider;
 
 namespace MPSettings.Test
 {
+    public class Meier: DynamicSettings
+    {
+        public bool Mike { get; set; }
+
+
+        public string Mike1 { get; set; }
+    }
+
+
     [TestClass]
-    public class UnitTest1
+    public class SettingsTest
     {
         [TestMethod]
-        public void TestMethod1()
+        public void GetSettingsDynamic_Success()
         {
-            dynamic globalSettings = SettingsManager.GetSettings();
+            SettingsManager.AddSettingsProvider(new YamlSettingsProvider());
 
-            int foo = globalSettings.Mike.Bar;
-            Assert.AreEqual(7, foo);
+            dynamic sett = SettingsManager.GetSettings();
+
+            sett.FireStarter.Should().Be("mike");
 
         }
+
+        [TestMethod]
+        public void GetSettingsStatic_Success()
+        {
+            var yy = MPSettings.Test.Properties.Settings2.Default.hyper;
+
+            yy.Should().Be("test");
+        }
     }
+
+
+   
 }

@@ -4,30 +4,29 @@ using System.Configuration;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using MPSettings.Internals;
 
 namespace MPSettings
 {
-    enum SettingsType
+    public class DynamicSettings : DynamicObject
     {
-        none,
-        branch,
-        leaf
-    }
+        Dictionary<string, object> dictionary
+            = new Dictionary<string, object>();
 
-
-    partial class DynamicSettings : DynamicObject
-    {
-        private readonly SettingsImpl _settingsImpl;
+        private ISettingsAdapter _settingsAdapter;
         private readonly string _path;
 
-        internal DynamicSettings(SettingsImpl settingsImpl)
-        {
-            _settingsImpl = settingsImpl;
-        }
+        public DynamicSettings()
+        { }
 
-        private DynamicSettings(SettingsImpl settingsImpl, string path)
+        private DynamicSettings(string path)
         {
             _path = path;
+        }
+
+        internal void Initialize(ISettingsAdapter settingsAdapter)
+        {
+            _settingsAdapter = settingsAdapter;
         }
 
         private string GetName(string name)
@@ -37,22 +36,39 @@ namespace MPSettings
                 : name;
         }
 
-        
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            Tuple<SettingsType,object> val = _settingsImpl.GetValue(binder.ReturnType, GetName(binder.Name));
-            if(val.Item1 == SettingsType.branch)
+            //if(!dictionary.TryGetValue(binder.Name.ToLower(), out result))
+            //{
+            //    dictionary[binder.Name.ToLower()] = result = new DynamicSettings();
+            //}
+
+            if(_settingsAdapter != null)
             {
-                result = new DynamicSettings(_settingsImpl, GetName(binder.Name));
-            
-            }
-            else if(val.Item1 == SettingsType.leaf)
-            {
-                result = val.Item2;
+                _settingsAdapter.RegisterProperty(binder.Name, binder.ReturnType);
+
+                result = _settingsAdapter[binder.Name];
+
+                return true;
             }
 
             result = null;
             return false;
+
+
+            //Tuple<SettingsType,object> val = _settingsImpl.GetValue(binder.ReturnType, GetName(binder.Name));
+            //if(val.Item1 == SettingsType.branch)
+            //{
+            //    result = new DynamicSettings(_settingsImpl, GetName(binder.Name));
+
+            //}
+            //else if(val.Item1 == SettingsType.leaf)
+            //{
+            //    result = val.Item2;
+            //}
+
+            //result = null;
+            //return false;
         }
 
         /// <summary> 
@@ -65,10 +81,13 @@ namespace MPSettings
         /// <returns>true if the operation is complete, false if the call site should determine behavior.</returns> 
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            return false;
+
+
+            dictionary[binder.Name.ToLower()] = value;
+            return true;
         }
 
-      
+
 
         /// <summary>
         /// Returns the enumeration of all dynamic member names. 
@@ -76,7 +95,7 @@ namespace MPSettings
         /// <returns>The list of dynamic member names.</returns>
         public override System.Collections.Generic.IEnumerable<string> GetDynamicMemberNames()
         {
-            return new string[0];
+            return dictionary.Keys;
         }
 
         //DynamicMetaObject IDynamicMetaObjectProvider.GetMetaObject(System.Linq.Expressions.Expression parameter)
