@@ -75,10 +75,6 @@
       <Project>{e92b019e-b2c9-4802-90e4-6a151f0aeafa}</Project>
       <Name>MPSettings.YamlProvider</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MPSettings\MPSettings.csproj">
-      <Project>{d0b2718e-53f2-410b-96d0-cb84830a584e}</Project>
-      <Name>MPSettings</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
