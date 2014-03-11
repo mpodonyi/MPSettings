@@ -7,7 +7,7 @@ using System.Text;
 using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
 
-namespace MPSettings.YamlProvider
+namespace YamlSettingsProvider
 {
     public class YamlFacade
     {

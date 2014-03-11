@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B871D1A9-0FBC-4DB8-B03A-5308D7C91ABB}</ProjectGuid>
+    <ProjectGuid>{6270C334-F3F0-48F8-9B7B-D70F9CB79E21}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MPSettings.YamlProvider.Test</RootNamespace>
-    <AssemblyName>MPSettings.YamlProvider.Test</AssemblyName>
+    <RootNamespace>YamlSettingsProvider.Test</RootNamespace>
+    <AssemblyName>YamlSettingsProvider.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -57,15 +57,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\YamlSettingsProvider\YamlSettingsProvider.csproj">
+      <Project>{a86f140d-91b1-44f4-b4f3-5c5b12383ca7}</Project>
+      <Name>YamlSettingsProvider</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="config.yaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MPSettings.YamlProvider\MPSettings.YamlProvider.csproj">
-      <Project>{e92b019e-b2c9-4802-90e4-6a151f0aeafa}</Project>
-      <Name>MPSettings.YamlProvider</Name>
-    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

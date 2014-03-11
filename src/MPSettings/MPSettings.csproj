@@ -34,13 +34,13 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
-    <Folder Include="Provider\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Defaults\DotNetSettingsProviderAdapter.cs" />
-    <Compile Include="DynamicSettings.cs" />
-    <Compile Include="Internals\ISettingsAdapter.cs" />
+    <Compile Include="Provider\ISettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Provider\SettingsBase.cs" />
+    <Compile Include="Provider\SettingsProvider.cs" />
+    <Compile Include="Provider\SettingsProperty.cs" />
     <Compile Include="SettingsManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using YamlDotNet.RepresentationModel;
 
-namespace MPSettings.YamlProvider
+namespace YamlSettingsProvider
 {
     public class YamlSettingsProvider : SettingsProvider
     {

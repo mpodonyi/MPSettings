@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
-using MPSettings.Internals;
 
-namespace MPSettings.Defaults
+
+namespace MPSettings.Provider
 {
 
 
-
+#if ttt
 
 
     public class DotNetSettingsAdapter : SettingsBase, ISettingsAdapter
@@ -175,4 +175,6 @@ namespace MPSettings.Defaults
         //}
       
     }
+
+#endif
 }

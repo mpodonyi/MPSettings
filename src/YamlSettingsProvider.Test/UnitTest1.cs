@@ -3,9 +3,9 @@ using System.IO;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace MPSettings.YamlProvider.Test
+namespace YamlSettingsProvider.Test
 {
-    class xyz 
+    class xyz
     {
         public xyz()
         { }

@@ -7,7 +7,7 @@
     <ProjectGuid>{746B2274-91BA-46B6-BB6B-DEAA160F99F0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MPSettings.Net</RootNamespace>
+    <RootNamespace>MPSettings</RootNamespace>
     <AssemblyName>MPSettings.Net</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -32,6 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -40,14 +41,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="SettingsManager.cs" />
+    <Compile Include="Dynamic\DynamicSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Provider\DotNetSettingsAdapter.cs" />
+    <Compile Include="Provider\DotNetSettingsProviderAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MPSettings\MPSettings.csproj">
       <Project>{6304171e-0cd6-4fb8-a993-25082129e753}</Project>
       <Name>MPSettings</Name>
+      <Aliases>global</Aliases>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

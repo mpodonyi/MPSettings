@@ -4,16 +4,20 @@ using System.Configuration;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
-using MPSettings.Internals;
+using MPSettings.Provider;
 
-namespace MPSettings
+
+namespace MPSettings.Dynamic
 {
-    public class DynamicSettings : DynamicObject
+
+#if ttt
+
+    public class DynamicSettings : DynamicObject, ISettings
     {
         Dictionary<string, object> dictionary
             = new Dictionary<string, object>();
 
-        private ISettingsAdapter _settingsAdapter;
+        private SettingsBridge _settingsAdapter;
         private readonly string _path;
 
         public DynamicSettings()
@@ -24,7 +28,7 @@ namespace MPSettings
             _path = path;
         }
 
-        internal void Initialize(ISettingsAdapter settingsAdapter)
+        internal void Initialize(SettingsBridge settingsAdapter)
         {
             _settingsAdapter = settingsAdapter;
         }
@@ -103,4 +107,6 @@ namespace MPSettings
         //    return new DynamicSettingsMeta(parameter, this);
         //}
     }
+
+#endif
 }

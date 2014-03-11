@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MPSettings.YamlProvider.Test")]
+[assembly: AssemblyTitle("YamlSettingsProvider")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("MPSettings.YamlProvider.Test")]
+[assembly: AssemblyProduct("YamlSettingsProvider")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("8c07983e-7505-4e87-bdc9-e461e1bc2a6d")]
+[assembly: Guid("e9accbbc-580c-4b29-ad5f-46c6d0041b3e")]
 
 // Version information for an assembly consists of the following four values:
 //
