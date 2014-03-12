@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YamlSettingsProvider", "Yam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YamlSettingsProvider.Test", "YamlSettingsProvider.Test\YamlSettingsProvider.Test.csproj", "{6270C334-F3F0-48F8-9B7B-D70F9CB79E21}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Yaml", "Yaml", "{712AD38F-FB8F-4D2D-A97B-1945EFCB1279}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,5 +42,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A86F140D-91B1-44F4-B4F3-5C5B12383CA7} = {712AD38F-FB8F-4D2D-A97B-1945EFCB1279}
+		{6270C334-F3F0-48F8-9B7B-D70F9CB79E21} = {712AD38F-FB8F-4D2D-A97B-1945EFCB1279}
 	EndGlobalSection
 EndGlobal

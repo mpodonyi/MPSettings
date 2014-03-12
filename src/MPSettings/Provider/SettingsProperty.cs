@@ -30,15 +30,19 @@ namespace MPSettings.Provider
     {
         public SettingsPropertyValue(SettingsProperty property, object value)
         {
-
-
+            SettingsProperty = property;
+            PropertyValue = value;
+            PropertyFound = true;
         }
 
         public SettingsPropertyValue(SettingsProperty property)
         {
-
-
+            SettingsProperty = property;
+            PropertyFound = false;
         }
+
+
+        public SettingsProperty SettingsProperty { get; private set; }
 
         public object PropertyValue { get; private set; }
 

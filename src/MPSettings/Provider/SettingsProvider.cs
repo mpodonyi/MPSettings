@@ -7,8 +7,8 @@ namespace MPSettings.Provider
 {
     public abstract class SettingsProvider
     {
-        protected abstract SettingsPropertyValue GetPropertyValue(SettingsContext context, SettingsProperty collection);
+        protected abstract IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection);
 
-        protected abstract void SetPropertyValues(SettingsContext context, SettingsPropertyValue collection);
+        protected abstract void SetPropertyValues(SettingsContext context, IEnumerable<SettingsPropertyValue> collection);
     }
 }
