@@ -1,89 +1,207 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Text;
+using sysconf = System.Configuration;
 
 namespace MPSettings.Provider
 {
-    public class SettingsPropertyWrapper : System.Configuration.SettingsProperty
+    public struct SettingsNode
     {
-        public SettingsPropertyWrapper(string name)
-            : base(name)
-        { }
+        private readonly string _Node;
 
-        public SettingsProperty SetProp { get; set; }
+        public SettingsNode(string node)
+        {
+            System.Diagnostics.Contracts.Contract.Requires(!string.IsNullOrWhiteSpace(node));
+
+            _Node = node;
+        }
+
+        private int Splitter
+        {
+            get
+            {
+                return _Node.LastIndexOf('.');
+            }
+        }
+
+
+        public string PropName
+        {
+            get
+            {
+                var splitter = Splitter;
+
+                return splitter == -1
+                    ? _Node
+                    : _Node.Substring(splitter);
+            }
+        }
+
+        public string GroupName
+        {
+            get
+            {
+                var splitter = Splitter;
+
+                return splitter == -1
+                    ? _Node
+                    : _Node.Substring(0, splitter);
+            }
+        }
+
+        public static string GetGroupName(string node)
+        {
+            return new SettingsNode(node).GroupName;
+        }
+
+        public static string GetPropName(string node)
+        {
+            return new SettingsNode(node).PropName;
+        }
+
+        public static string GetFullName(string node, string groupname)
+        {
+            //node can not be empty
+            return string.Join(".", groupname, node);
+        }
+
+
+
 
     }
 
+
+
+    //public class SettingsPropertyWrapper : sysconf.SettingsProperty
+    //{
+    //    public SettingsPropertyWrapper(string name)
+    //        : base(name)
+    //    { }
+
+    //    public SettingsProperty SetProp { get; set; }
+
+    //}
+
     public class DotNetSettingsProviderAdapter : SettingsProvider
     {
-        private readonly System.Configuration.SettingsProvider SettingsProvider;
+        private readonly sysconf.SettingsProvider SettingsProvider;
 
 
-        public DotNetSettingsProviderAdapter(System.Configuration.SettingsProvider settingsProvider)
+        public DotNetSettingsProviderAdapter(sysconf.SettingsProvider settingsProvider)
         {
             SettingsProvider = settingsProvider;
         }
 
-        private string GetPropName(string name)
+        private sysconf.SettingsProperty FromSettingsProperty(SettingsProperty prop)
         {
-            string[] splitted = name.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-            return splitted.Length > 0
-                ? splitted[splitted.Length - 1]
-                : null;
-        }
-
-        private string GetPropPath(string name)
-        {
-            return null;
-        }
-
-        private SettingsPropertyCollection ToSettingsPropertyCollection(IEnumerable<SettingsProperty> collection)
-        {
-            SettingsPropertyCollection retval = new SettingsPropertyCollection();
-            foreach(var prop in collection)
+            if(prop.Context.ContainsKey("_RoundtripProperty"))
             {
-                SettingsPropertyWrapper setprop = new SettingsPropertyWrapper(GetPropName(prop.Name));
-                setprop.SetProp = prop;
-                setprop.PropertyType = prop.PropertyType;
-                
-                retval.Add(setprop);
+                return prop.Context["_RoundtripProperty"] as sysconf.SettingsProperty;
             }
 
-            return retval;
+            Type typeOfProperty = prop.IsUserProp
+               ? typeof(sysconf.UserScopedSettingAttribute)
+               : typeof(sysconf.ApplicationScopedSettingAttribute);
+
+            sysconf.SettingsProperty setprop = new sysconf.SettingsProperty(SettingsNode.GetGroupName(prop.Name));
+            setprop.PropertyType = prop.PropertyType;
+            setprop.Attributes[typeOfProperty] = null;
+            setprop.DefaultValue = null;
+            setprop.IsReadOnly = false;
+
+            setprop.Attributes["_RoundtripProperty"] = prop;
+            prop.Context["_RoundtripProperty"] = setprop;
+
+            return setprop;
         }
 
-        private IEnumerable<SettingsPropertyValue> FromSettingsPropertyValueCollection(SettingsPropertyValueCollection collection)
+        private SettingsPropertyValue FromSettingsPropertyValue(sysconf.SettingsPropertyValue propval)
         {
-            foreach(System.Configuration.SettingsPropertyValue obj in collection)
-            {
-                var wrappedprop = obj.Property as SettingsPropertyWrapper;
+            SettingsProperty prop = propval.Property.Attributes["_RoundtripProperty"] as SettingsProperty;
 
-                SettingsPropertyValue propValue=new SettingsPropertyValue(wrappedprop.SetProp,obj.PropertyValue);
-
-                yield return propValue;
-            }
+            if(propval.UsingDefaultValue) 
+                return new SettingsPropertyValue(prop);
+            
+            return new SettingsPropertyValue(prop, propval.PropertyValue);
         }
+
+
+
+        private SettingsProperty FromSettingsProperty(sysconf.SettingsProperty prop, string groupname)
+        {
+            if(prop.Attributes.ContainsKey("_RoundtripProperty"))
+            {
+                return prop.Attributes["_RoundtripProperty"] as SettingsProperty;
+            }
+
+            SettingsProperty setprop = new SettingsProperty(SettingsNode.GetFullName(prop.Name, groupname), prop.PropertyType, new Dictionary<object, object>());
+            setprop.IsUserProp = prop.Attributes[typeof(sysconf.UserScopedSettingAttribute)] is sysconf.UserScopedSettingAttribute;
+
+            setprop.Context["_RoundtripProperty"] = prop;
+            prop.Attributes["_RoundtripProperty"] = setprop;
+
+            return setprop;
+        }
+
+
+
+        
+
 
 
         protected override IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection)
         {
-            System.Configuration.SettingsContext setcontext=new System.Configuration.SettingsContext();
+            object SettingsKey = null;
+            context.TryGetValue("SettingsKey", out SettingsKey);
 
-            return FromSettingsPropertyValueCollection(SettingsProvider.GetPropertyValues(setcontext,ToSettingsPropertyCollection(collection)));
+            
+
+            foreach(var obj in (from i in collection group i by SettingsNode.GetGroupName(i.Name)))
+            {
+                sysconf.SettingsContext setcontext = new sysconf.SettingsContext();
+
+                if(!string.IsNullOrEmpty(obj.Key))
+                    setcontext["GroupName"] = obj.Key;
+                if(SettingsKey != null)
+                    setcontext["SettingsKey"] = SettingsKey;
+
+                sysconf.SettingsPropertyCollection tmpcoll = new sysconf.SettingsPropertyCollection();
+                foreach(var prop in obj)
+                    tmpcoll.Add(FromSettingsProperty(prop));
+
+                foreach(sysconf.SettingsPropertyValue obj2 in SettingsProvider.GetPropertyValues(setcontext, tmpcoll))
+                {
+                    yield return FromSettingsPropertyValue(obj2);
+                }
+            }
+
         }
 
         protected override void SetPropertyValues(SettingsContext context, IEnumerable<SettingsPropertyValue> collection)
         {
-            SettingsContext cont = new SettingsContext();
+            object SettingsKey = null;
+            context.TryGetValue("SettingsKey", out SettingsKey);
+
+            foreach(var obj in (from i in collection group i by SettingsNode.GetGroupName(i.SettingsProperty.Name)))
+            {
+                sysconf.SettingsContext setcontext = new sysconf.SettingsContext();
+                if(!string.IsNullOrEmpty(obj.Key))
+                    setcontext["GroupName"] = obj.Key;
+                if(SettingsKey != null)
+                    setcontext["SettingsKey"] = SettingsKey;
+
+                //MP: work here
+
+
+                sysconf.SettingsPropertyValueCollection coll = new sysconf.SettingsPropertyValueCollection();
 
 
 
-            SettingsProvider.SetPropertyValues(cont,)
+                SettingsProvider.SetPropertyValues(setcontext, coll);
+            }
 
 
-            throw new NotImplementedException();
         }
     }
 }

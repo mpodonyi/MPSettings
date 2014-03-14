@@ -14,7 +14,7 @@ namespace MPSettings.Provider
 
     public class SettingsProperty
     {
-        public SettingsProperty(string name, Type propertyType, IDictionary<string, object> context)
+        public SettingsProperty(string name, Type propertyType, IDictionary<object, object> context)
         { 
             
         
@@ -24,6 +24,8 @@ namespace MPSettings.Provider
         
         public virtual string Name { get; set; }
         public virtual Type PropertyType { get; set; }
+
+        public virtual bool IsUserProp { get; set; }
     }
 
     public class SettingsPropertyValue
