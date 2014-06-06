@@ -11,19 +11,35 @@ namespace YamlSettingsProvider
 {
     public class YamlSettingsProvider : SettingsProvider
     {
-
+        public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
+        {
+            if(string.IsNullOrEmpty(name))
+            {
+                name = "YamlSettingsProvider";
+            }
+            base.Initialize(name, config);
+        }
 
         public override string ApplicationName
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get;
+            set;
         }
+       
+
+
+        //public override string ApplicationName
+        //{
+        //    get
+        //    {
+        //        throw new NotImplementedException();
+        //    }
+        //    set
+        //    {
+        //        string xyz = value;
+        //        throw new NotImplementedException();
+        //    }
+        //}
 
         private string MyPath
         {
@@ -41,6 +57,10 @@ namespace YamlSettingsProvider
 
         public override SettingsPropertyValueCollection GetPropertyValues(SettingsContext context, SettingsPropertyCollection collection)
         {
+            string groupName = context["GroupName"] as string;
+            Type settingsClassType = context["SettingsClassType"] as Type;
+            string settingsKey = context["SettingsKey"] as string;
+
             if(yaml == null)
                 yaml = new YamlFacade(MyPath);
             SettingsPropertyValueCollection propvalcoll = new SettingsPropertyValueCollection();
