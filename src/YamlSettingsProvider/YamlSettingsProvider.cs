@@ -18,6 +18,9 @@ namespace YamlSettingsProvider
                 name = "YamlSettingsProvider";
             }
             base.Initialize(name, config);
+
+            yamlFacade = new YamlFacade(MyPath);
+
         }
 
         public override string ApplicationName
@@ -25,31 +28,23 @@ namespace YamlSettingsProvider
             get;
             set;
         }
-       
+      
 
-
-        //public override string ApplicationName
-        //{
-        //    get
-        //    {
-        //        throw new NotImplementedException();
-        //    }
-        //    set
-        //    {
-        //        string xyz = value;
-        //        throw new NotImplementedException();
-        //    }
-        //}
-
-        private string MyPath
+        private static string MyPath
         {
             get
             {
-                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "config.yaml");
+                string apppath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+
+
+                string combinedpath=Path.Combine(apppath, "config.yaml");
+
+                return combinedpath;
+                //return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), );
             }
         }
 
-        private YamlFacade yaml = null;
+        private YamlFacade yamlFacade = null;
 
 
 
@@ -61,13 +56,11 @@ namespace YamlSettingsProvider
             Type settingsClassType = context["SettingsClassType"] as Type;
             string settingsKey = context["SettingsKey"] as string;
 
-            if(yaml == null)
-                yaml = new YamlFacade(MyPath);
             SettingsPropertyValueCollection propvalcoll = new SettingsPropertyValueCollection();
             foreach(SettingsProperty property in collection)
             {
                 bool found;
-                var obj = yaml.GetObject(property.Name, out found);
+                var obj = yamlFacade.GetObject(property.Name, out found);
 
                 SettingsPropertyValue val = new SettingsPropertyValue(property);
                 val.PropertyValue = "test";

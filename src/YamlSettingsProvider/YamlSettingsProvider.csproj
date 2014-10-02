@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SettingsManager.cs" />
     <Compile Include="SettingsNode.cs" />
     <Compile Include="YamlFacade.cs" />
     <Compile Include="YamlSettingsProvider.cs" />

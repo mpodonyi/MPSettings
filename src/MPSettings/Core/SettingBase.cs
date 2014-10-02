@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MPSettings.Provider
+namespace MPSettings.Core
 {
-    public abstract class SettingsBase: ISettings
+    public abstract class SettingBase: ISetting
     {
-        private SettingsBridge bridge;
+        private SettingsFactory bridge;
       
 
         protected T Get<T>(string name)
@@ -27,7 +27,7 @@ namespace MPSettings.Provider
 
         #region ISettings Members
 
-        void ISettings.Initialize(SettingsBridge repository)
+        void ISetting.Initialize(SettingsFactory repository)
         {
             bridge=repository;
         }

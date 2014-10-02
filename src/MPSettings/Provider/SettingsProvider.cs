@@ -5,10 +5,19 @@ using System.Text;
 
 namespace MPSettings.Provider
 {
-    public abstract class SettingsProvider
+    public interface ISettingsProvider
     {
-        protected abstract IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection);
+        IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection);
 
-        protected abstract void SetPropertyValues(SettingsContext context, IEnumerable<SettingsPropertyValue> collection);
+        void SetPropertyValues(SettingsContext context, IEnumerable<SettingsPropertyValue> collection);
+    }
+
+
+    public abstract class SettingsProvider : ISettingsProvider
+    {
+
+        public abstract IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection);
+
+        public abstract void SetPropertyValues(SettingsContext context, IEnumerable<SettingsPropertyValue> collection);
     }
 }

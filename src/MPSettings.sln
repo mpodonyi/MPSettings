@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPSettings.Test", "MPSettings.Test\MPSettings.Test.csproj", "{469C860B-DC10-404E-851E-BE2E95C9E0AE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPSettings", "MPSettings\MPSettings.csproj", "{6304171E-0CD6-4FB8-A993-25082129E753}"

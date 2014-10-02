@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MPSettings.Provider;
+using MPSettings.Core;
 
 namespace MPSettings.Test
 {
-    public class StaticTestSettings: SettingsBase
+    public class StaticTestSettings: SettingBase
     {
         public bool Mike
         {
@@ -41,7 +42,7 @@ namespace MPSettings.Test
     }
 
 
-    public class NestedStaticTestSettings : SettingsBase
+    public class NestedStaticTestSettings : SettingBase
     {
         public bool Mike
         {

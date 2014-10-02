@@ -150,7 +150,7 @@ namespace MPSettings.Provider
 
 
 
-        protected override IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection)
+        public override IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection)
         {
             object SettingsKey = null;
             context.TryGetValue("SettingsKey", out SettingsKey);
@@ -178,7 +178,7 @@ namespace MPSettings.Provider
 
         }
 
-        protected override void SetPropertyValues(SettingsContext context, IEnumerable<SettingsPropertyValue> collection)
+        public override void SetPropertyValues(SettingsContext context, IEnumerable<SettingsPropertyValue> collection)
         {
             object SettingsKey = null;
             context.TryGetValue("SettingsKey", out SettingsKey);

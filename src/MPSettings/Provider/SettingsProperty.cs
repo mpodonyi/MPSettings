@@ -14,10 +14,11 @@ namespace MPSettings.Provider
 
     public class SettingsProperty
     {
-        public SettingsProperty(string name, Type propertyType, IDictionary<object, object> context)
-        { 
-            
-        
+        public SettingsProperty(string name, Type propertyType, IDictionary<string, object> context)
+        {
+            Name = name;
+            PropertyType = propertyType;
+            Context = context;
         }
 
         public virtual IDictionary<string, object> Context { get; set; }
@@ -25,7 +26,7 @@ namespace MPSettings.Provider
         public virtual string Name { get; set; }
         public virtual Type PropertyType { get; set; }
 
-        public virtual bool IsUserProp { get; set; }
+        //public virtual bool IsUserProp { get; set; }
     }
 
     public class SettingsPropertyValue
@@ -34,20 +35,20 @@ namespace MPSettings.Provider
         {
             SettingsProperty = property;
             PropertyValue = value;
-            PropertyFound = true;
+            //PropertyFound = true;
         }
 
-        public SettingsPropertyValue(SettingsProperty property)
-        {
-            SettingsProperty = property;
-            PropertyFound = false;
-        }
+        //public SettingsPropertyValue(SettingsProperty property)
+        //{
+        //    SettingsProperty = property;
+        //    PropertyFound = false;
+        //}
 
 
         public SettingsProperty SettingsProperty { get; private set; }
 
         public object PropertyValue { get; private set; }
 
-        public bool PropertyFound { get; private set; }
+        //public bool PropertyFound { get; private set; }
     }
 }
