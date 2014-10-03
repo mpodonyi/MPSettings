@@ -17,8 +17,7 @@ namespace MPSettings.Provider
 
     public abstract class SettingsProvider : ISettingsProvider
     {
-        public void Initialize(IDictionary<string, object> namevalue)
-        { }
+        public abstract void Initialize(IDictionary<string, object> namevalue);
 
         public abstract IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection);
 

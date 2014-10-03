@@ -10,29 +10,15 @@ namespace MPSettings.Provider.Xml
 {
     class XmlSettingsProvider : SettingsProvider
     {
+        public override void Initialize(IDictionary<string, object> namevalue)
+        {
+            Path = namevalue["path"] as string;
+        }
 
-#if NET
-        private XDocument GetXDocument()
+        private string Path
         {
-            string apppath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
-            string combinedpath = System.IO.Path.Combine(apppath, "settings.config");
-            return XDocument.Load(combinedpath);
-        }
-#elif WIN8
-        private XDocument GetXDocument()
-        {
-            return null;
-        }
-#else
-        private XDocument GetXDocument()
-        { 
-            return null;
-        }
-#endif
-
-        private void Load()
-        {
-            XDocument xdoc = GetXDocument();
+            get;
+            set;
         }
 
         public override IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection)

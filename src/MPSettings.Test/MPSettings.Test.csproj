@@ -78,6 +78,7 @@
     <None Include="packages.config" />
     <None Include="settings.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>

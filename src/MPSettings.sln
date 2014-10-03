@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPSettings.Test", "MPSettin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPSettings", "MPSettings\MPSettings.csproj", "{6304171E-0CD6-4FB8-A993-25082129E753}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPSettings.Net", "MPSettings.Net\MPSettings.Net.csproj", "{7CA20D3C-1D90-432E-AA42-ABAB330C2A07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPSettings.Win8", "MPSettings.Win8\MPSettings.Win8.csproj", "{D92F2A4D-2BA7-493F-B13F-31D5DCF9F60F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{6304171E-0CD6-4FB8-A993-25082129E753}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6304171E-0CD6-4FB8-A993-25082129E753}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6304171E-0CD6-4FB8-A993-25082129E753}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CA20D3C-1D90-432E-AA42-ABAB330C2A07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CA20D3C-1D90-432E-AA42-ABAB330C2A07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CA20D3C-1D90-432E-AA42-ABAB330C2A07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CA20D3C-1D90-432E-AA42-ABAB330C2A07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D92F2A4D-2BA7-493F-B13F-31D5DCF9F60F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D92F2A4D-2BA7-493F-B13F-31D5DCF9F60F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D92F2A4D-2BA7-493F-B13F-31D5DCF9F60F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D92F2A4D-2BA7-493F-B13F-31D5DCF9F60F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

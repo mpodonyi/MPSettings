@@ -22,20 +22,19 @@ namespace MPSettings.Reflection
         internal static ICollection<PropertyInfo> GetProperties<T>(T obj) where T : new()
         {
             List<PropertyInfo> retval = new List<PropertyInfo>();
-
-            PropertyInfo[] properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
+#if WIN8
+            IEnumerable<PropertyInfo> properties = from i in typeof(T).GetRuntimeProperties()
+                                                   where i.GetMethod.IsPublic && !i.GetMethod.IsStatic && i.SetMethod.IsPublic && !i.SetMethod.IsStatic
+                                                            && i.CanRead && i.CanWrite
+                                                   select i;
+#else
+            IEnumerable<PropertyInfo> properties = from i in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                                   where i.GetGetMethod(false) != null && i.GetSetMethod(false) != null
+                                                        && i.CanRead && i.CanWrite
+                                                   select i;
+#endif
             foreach (PropertyInfo p in properties)
             {
-                // If not writable then cannot null it; if not readable then cannot check it's value
-                if (!p.CanWrite || !p.CanRead) { continue; }
-
-                MethodInfo mget = p.GetGetMethod(false);
-                MethodInfo mset = p.GetSetMethod(false);
-
-                // Get and set methods have to be public
-                if (mget == null) { continue; }
-                if (mset == null) { continue; }
 
                 retval.Add(p);
                 //retval.Add(new PropertyAccessor { Type = p.PropertyType, Name = p.Name, Value = p.GetValue(obj, null) });
