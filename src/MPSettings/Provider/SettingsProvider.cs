@@ -7,6 +7,8 @@ namespace MPSettings.Provider
 {
     public interface ISettingsProvider
     {
+        void Initialize(IDictionary<string, object> namevalue);
+
         IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection);
 
         void SetPropertyValues(SettingsContext context, IEnumerable<SettingsPropertyValue> collection);
@@ -15,6 +17,7 @@ namespace MPSettings.Provider
 
     public abstract class SettingsProvider : ISettingsProvider
     {
+        public abstract void Initialize(IDictionary<string, object> namevalue);
 
         public abstract IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection);
 

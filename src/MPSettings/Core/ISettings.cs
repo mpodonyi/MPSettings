@@ -54,6 +54,8 @@ namespace MPSettings.Core
 
                 if (properties.Count == retval.Count)
                     break;
+
+                properties = properties.Except(retval.Select(obj => obj.SettingsProperty)).ToList();
             }
 
             return retval.ToDictionary(obj => obj.SettingsProperty.Context["propinfo"] as PropertyInfo, obj => obj);
@@ -72,27 +74,27 @@ namespace MPSettings.Core
         //}
 
 
-        protected T Get<T>(string name)
-        {
-            var retval = ApplicationSettingsPropertyValues.FirstOrDefault(o => o.SettingsProperty.Name == name);
-            //foreach(var provider in ApplicationSettingsProvider)
-            //{
-            // //   provider.
+        //protected T Get<T>(string name)
+        //{
+        //    var retval = ApplicationSettingsPropertyValues.FirstOrDefault(o => o.SettingsProperty.Name == name);
+        //    //foreach(var provider in ApplicationSettingsProvider)
+        //    //{
+        //    // //   provider.
 
 
 
-            //}
+        //    //}
 
 
 
 
-            return default(T);
-        }
+        //    return default(T);
+        //}
 
-        protected void Set<T>(string name, T value)
-        {
+        //protected void Set<T>(string name, T value)
+        //{
 
-        }
+        //}
 
 
 

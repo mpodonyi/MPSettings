@@ -51,10 +51,10 @@ namespace MPSettings.Reflection
             return retval;
         }
 
-        internal static void SetProperty<T>(T obj, string name, object value) where T : new()
+        internal static void SetProperty<T>(T obj, PropertyInfo propInfo, object value) where T : new()
         {
-            PropertyInfo property = typeof(T).GetProperty(name);
-            property.SetValue(obj, value, null);
+            //PropertyInfo property = typeof(T).GetProperty(name);
+            propInfo.SetValue(obj, value, null);
         }
     }
 }

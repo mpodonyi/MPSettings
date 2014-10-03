@@ -14,9 +14,12 @@ namespace MPSettings
     {
         private static SettingsManager _Instance = new SettingsManager();
 
-        public static SettingsManager GetSettingsManager()
+        public static SettingsManager Instance
         {
-            return _Instance;
+            get
+            {
+                return _Instance;
+            }
         }
 
         public T GetSettings<T>() where T : new()
@@ -28,17 +31,19 @@ namespace MPSettings
             {
                 SettingsFactory adap = new SettingsFactory(SettingsProviders.AppSettingsProvider);
                 settings.Initialize(adap);
-                return retval;
+                
             }
             else
             {
                 SettingsFactory adap = new SettingsFactory(SettingsProviders.AppSettingsProvider);
                 var pa = Reflection.Reflector.GetProperties(retval);
-
-
-
-                return adap.GetInternal<T>();
+                foreach (var prop in adap.GetPropertyValues(pa))
+                {
+                    Reflection.Reflector.SetProperty(retval, prop.Key, prop.Value.PropertyValue);
+                }
             }
+
+            return retval;
         }
        
     }
