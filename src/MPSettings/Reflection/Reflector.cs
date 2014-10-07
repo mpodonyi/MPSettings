@@ -22,17 +22,12 @@ namespace MPSettings.Reflection
         internal static ICollection<PropertyInfo> GetProperties<T>(T obj) where T : new()
         {
             List<PropertyInfo> retval = new List<PropertyInfo>();
-#if WIN8
-            IEnumerable<PropertyInfo> properties = from i in typeof(T).GetRuntimeProperties()
-                                                   where i.GetMethod.IsPublic && !i.GetMethod.IsStatic && i.SetMethod.IsPublic && !i.SetMethod.IsStatic
-                                                            && i.CanRead && i.CanWrite
-                                                   select i;
-#else
+
             IEnumerable<PropertyInfo> properties = from i in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
                                                    where i.GetGetMethod(false) != null && i.GetSetMethod(false) != null
                                                         && i.CanRead && i.CanWrite
                                                    select i;
-#endif
+
             foreach (PropertyInfo p in properties)
             {
 

@@ -18,11 +18,6 @@ namespace MPSettings.Provider.Xml
             string combinedpath = System.IO.Path.Combine(apppath, "settings.config");
             return XDocument.Load(combinedpath);
         }
-#elif WIN8
-        private XDocument GetXDocument()
-        {
-            return null;
-        }
 #else
         private XDocument GetXDocument()
         { 
