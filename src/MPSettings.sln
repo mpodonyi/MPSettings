@@ -6,8 +6,14 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPSettings.Test", "MPSettings.Test\MPSettings.Test.csproj", "{469C860B-DC10-404E-851E-BE2E95C9E0AE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPSettings", "MPSettings\MPSettings.csproj", "{6304171E-0CD6-4FB8-A993-25082129E753}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B62CBF49-7C70-4455-9F25-605439A737EC} = {B62CBF49-7C70-4455-9F25-605439A737EC}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPSettings.Net", "MPSettings.Net\MPSettings.Net.csproj", "{7CA20D3C-1D90-432E-AA42-ABAB330C2A07}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6304171E-0CD6-4FB8-A993-25082129E753} = {6304171E-0CD6-4FB8-A993-25082129E753}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPSettings.Tools.ProjectBuilder", "MPSettings.Tools.ProjectBuilder\MPSettings.Tools.ProjectBuilder.csproj", "{B62CBF49-7C70-4455-9F25-605439A737EC}"
 EndProject

@@ -30,7 +30,7 @@ namespace MPSettings.Tools.ProjectBuilder
 
         private void LinkFrom(Project parentProject)
         {
-          
+
             bool dirtyflag = false;
 
             List<CompileUnit> parentCompileUnits = parentProject.GetCompileUnits();
@@ -45,8 +45,8 @@ namespace MPSettings.Tools.ProjectBuilder
                 }
             }
 
-            //if (dirtyflag)
-            //    Root.Save(PathToProjectFile);
+            if (dirtyflag)
+                Root.Save(PathToProjectFile);
         }
 
 
@@ -64,12 +64,12 @@ namespace MPSettings.Tools.ProjectBuilder
 
         private void AddCompileUnit(CompileUnit parentunit)
         {
-            GetOrCreateItemGroup().Add(parentunit.CreateNewXElement(this));
+            GetAddAfter().AddAfterSelf(parentunit.CreateNewXElement(this));
         }
 
-        private XElement GetOrCreateItemGroup()
+        private XElement GetAddAfter()
         {
-            return Root.Element(Constants.ns + "Project").Element(Constants.ns + "ItemGroup"); //MP: create if not exist
+            return Root.Element(Constants.ns + "Project").Elements(Constants.ns + "ItemGroup").Elements(Constants.ns + "Compile").Last(); //MP: create if not exist
         }
 
         private List<CompileUnit> GetCompileUnits()
@@ -84,7 +84,7 @@ namespace MPSettings.Tools.ProjectBuilder
         {
             private readonly string Include;
             private readonly string LinkPath;
-            private readonly bool IsLink;
+            private readonly bool IsLink = false;
             private readonly XElement ThisElemeny;
             private readonly Project myproject;
 
@@ -94,8 +94,11 @@ namespace MPSettings.Tools.ProjectBuilder
                 ThisElemeny = element;
                 Include = element.Attribute("Include").Value;
                 var linkelement = element.Element(Constants.ns + "Link");
-                IsLink = linkelement != null;
-                LinkPath = linkelement.Value;
+                if (linkelement != null)
+                {
+                    IsLink = true;
+                    LinkPath = linkelement.Value;
+                }
             }
 
             internal XElement CreateNewXElement(Project project)
@@ -111,16 +114,15 @@ namespace MPSettings.Tools.ProjectBuilder
                 else
                 {
                     newInclude = FixPath(Include, myproject.PathToProjectFile, project.PathToProjectFile);
-                    newLinkPath = newInclude;
+                    newLinkPath = Include;
                 }
 
-                var retval = string.Format("<Compile Include=\"{0}\">" +
-                                "<Link>{1}</Link>" +
-                               "</Compile>"
-                               , newInclude
-                               , newLinkPath);
+                XElement retval = new XElement(Constants.ns + "Compile",
+                    new XAttribute("Include", newInclude),
+                    new XElement(Constants.ns + "Link", newLinkPath)
+                    );
 
-                return XElement.Parse(retval);
+                return retval;
             }
 
             public static string FixPath(string pathToFile, string pathToParentProject, string pathToChildProject)
@@ -144,6 +146,8 @@ namespace MPSettings.Tools.ProjectBuilder
 
             public bool Equals(CompileUnit other)
             {
+                if (other == null)
+                    return false;
                 string nameA = this.IsLink ? this.LinkPath : this.Include;
                 string nameB = other.IsLink ? other.LinkPath : other.Include;
 
@@ -151,6 +155,6 @@ namespace MPSettings.Tools.ProjectBuilder
             }
         }
 
-     
+
     }
 }

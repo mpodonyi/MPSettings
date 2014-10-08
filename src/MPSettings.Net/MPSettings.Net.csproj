@@ -39,17 +39,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\MPSettings\Core\ISettings.cs">
       <Link>Core\ISettings.cs</Link>
     </Compile>
     <Compile Include="..\MPSettings\Core\SettingBase.cs">
       <Link>Core\SettingBase.cs</Link>
     </Compile>
-    <Compile Include="..\MPSettings\Provider\SettingsProperty.cs">
-      <Link>Provider\SettingsProperty.cs</Link>
-    </Compile>
     <Compile Include="..\MPSettings\Provider\SettingsProvider.cs">
       <Link>Provider\SettingsProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\MPSettings\Provider\SettingsProperty.cs">
+      <Link>Provider\SettingsProperty.cs</Link>
     </Compile>
     <Compile Include="..\MPSettings\Provider\Xml\XmlSettingsProvider.cs">
       <Link>Provider\Xml\XmlSettingsProvider.cs</Link>
@@ -63,7 +64,6 @@
     <Compile Include="..\MPSettings\SettingsProviders.cs">
       <Link>SettingsProviders.cs</Link>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
