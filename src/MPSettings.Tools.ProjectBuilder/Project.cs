@@ -30,7 +30,6 @@ namespace MPSettings.Tools.ProjectBuilder
 
         private void LinkFrom(Project parentProject)
         {
-
             bool dirtyflag = false;
 
             List<CompileUnit> parentCompileUnits = parentProject.GetCompileUnits();
@@ -48,9 +47,6 @@ namespace MPSettings.Tools.ProjectBuilder
             if (dirtyflag)
                 Root.Save(PathToProjectFile);
         }
-
-
-        //private RemoveLinkedProjectFiles()
 
 
         public Project LinkTo(params Project[] projects)
@@ -80,7 +76,7 @@ namespace MPSettings.Tools.ProjectBuilder
         }
 
 
-        internal class CompileUnit : IEquatable<CompileUnit>
+        private sealed class CompileUnit : IEquatable<CompileUnit>
         {
             private readonly string Include;
             private readonly string LinkPath;
@@ -88,7 +84,7 @@ namespace MPSettings.Tools.ProjectBuilder
             private readonly XElement ThisElemeny;
             private readonly Project myproject;
 
-            public CompileUnit(XElement element, Project project)
+            internal CompileUnit(XElement element, Project project)
             {
                 myproject = project;
                 ThisElemeny = element;
@@ -125,7 +121,7 @@ namespace MPSettings.Tools.ProjectBuilder
                 return retval;
             }
 
-            public static string FixPath(string pathToFile, string pathToParentProject, string pathToChildProject)
+            private static string FixPath(string pathToFile, string pathToParentProject, string pathToChildProject)
             {
                 string ParentDirectory = Path.GetDirectoryName(pathToParentProject);
                 string ChildDirectory = Path.GetDirectoryName(pathToChildProject);
@@ -142,16 +138,78 @@ namespace MPSettings.Tools.ProjectBuilder
                 return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
             }
 
+            private string AbsolutePath
+            {
+                get 
+                {
+                    string basedirectory = Path.GetDirectoryName(myproject.PathToProjectFile);
+                    if (!basedirectory.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                    {
+                        basedirectory += Path.DirectorySeparatorChar;
+                    }
+
+                    Uri baseUri = new Uri(basedirectory);
+                    Uri fullUri = new Uri(baseUri, Include);
+
+                    return fullUri.ToString();
+                }
+            }
 
 
             public bool Equals(CompileUnit other)
             {
                 if (other == null)
                     return false;
-                string nameA = this.IsLink ? this.LinkPath : this.Include;
-                string nameB = other.IsLink ? other.LinkPath : other.Include;
 
-                return nameA.Equals(nameB);
+                if (this.IsLink && other.IsLink)
+                {
+                    return this.AbsolutePath.Equals(other.AbsolutePath);
+                }
+                else if (this.IsLink && !other.IsLink)
+                {
+                    return this.AbsolutePath.Equals(other.AbsolutePath);
+                }
+                else if (!this.IsLink && other.IsLink)
+                {
+                    return this.AbsolutePath.Equals(other.AbsolutePath);
+                }
+                else if (!this.IsLink && !other.IsLink)
+                {
+                    return this.Include.Equals(other.Include);
+                }
+
+                throw new NotSupportedException();
+
+
+                //string nameA = this.IsLink ? this.LinkPath : this.Include;
+                //string nameB = other.IsLink ? other.LinkPath : other.Include;
+
+                //return nameA.Equals(nameB);
+
+
+
+                
+                //return this.AbsolutePath.Equals(other.AbsolutePath);
+            }
+
+            public override int GetHashCode()
+            {
+                return this.AbsolutePath.GetHashCode();
+            }
+
+
+        }
+
+        private sealed class CompileUnitEqualityComparer : EqualityComparer<CompileUnit>
+        {
+            public override bool Equals(CompileUnit x, CompileUnit y)
+            {
+                return x.Equals(y);
+            }
+
+            public override int GetHashCode(CompileUnit obj)
+            {
+                return obj.GetHashCode();
             }
         }
 
