@@ -32,14 +32,28 @@ namespace MPSettings.Tools.ProjectBuilder
         {
             bool dirtyflag = false;
 
-            List<CompileUnit> parentCompileUnits = parentProject.GetCompileUnits();
-            List<CompileUnit> myCompileUnits = this.GetCompileUnits();
+            var parentCompileUnits = parentProject.GetCompileUnits();
+            var myCompileUnits = this.GetCompileUnits();
 
-            foreach (CompileUnit parentunit in parentCompileUnits)
+            var unitsConnectedWithParentProject = from i in myCompileUnits
+                                                  where i.IsBasedIn(parentProject)
+                                                  select i;
+
+            var compileUnitsToRemove = unitsConnectedWithParentProject.Except(parentCompileUnits);
+
+            var compileUnitsToAdd = parentCompileUnits.Except(unitsConnectedWithParentProject);
+
+            foreach (var unit in compileUnitsToRemove)
             {
-                if (!myCompileUnits.Contains<CompileUnit>(parentunit))
+                RemoveCompileUnit(unit);
+                dirtyflag = true;
+            }
+
+            foreach (var unit in compileUnitsToAdd)
+            {
+                if (!myCompileUnits.Contains<CompileUnit>(unit)) //check that no object with same name exist
                 {
-                    AddCompileUnit(parentunit);
+                    AddCompileUnit(unit);
                     dirtyflag = true;
                 }
             }
@@ -57,10 +71,15 @@ namespace MPSettings.Tools.ProjectBuilder
             return this;
         }
 
+        private void RemoveCompileUnit(CompileUnit compileunit)
+        {
+            compileunit.XmlElement.Remove();
+        }
+
 
         private void AddCompileUnit(CompileUnit parentunit)
         {
-            GetAddAfter().AddAfterSelf(parentunit.CreateNewXElement(this));
+            GetAddAfter().AddAfterSelf(parentunit.CreateLinkedXElementFor(this));
         }
 
         private XElement GetAddAfter()
@@ -81,13 +100,13 @@ namespace MPSettings.Tools.ProjectBuilder
             private readonly string Include;
             private readonly string LinkPath;
             private readonly bool IsLink = false;
-            private readonly XElement ThisElemeny;
+            public readonly XElement XmlElement;
             private readonly Project myproject;
 
             internal CompileUnit(XElement element, Project project)
             {
                 myproject = project;
-                ThisElemeny = element;
+                XmlElement = element;
                 Include = element.Attribute("Include").Value;
                 var linkelement = element.Element(Constants.ns + "Link");
                 if (linkelement != null)
@@ -97,21 +116,10 @@ namespace MPSettings.Tools.ProjectBuilder
                 }
             }
 
-            internal XElement CreateNewXElement(Project project)
+            internal XElement CreateLinkedXElementFor(Project project)
             {
-                string newInclude;
-                string newLinkPath;
-
-                if (this.IsLink)
-                {
-                    newInclude = Include;
-                    newLinkPath = LinkPath;
-                }
-                else
-                {
-                    newInclude = FixPath(Include, myproject.PathToProjectFile, project.PathToProjectFile);
-                    newLinkPath = Include;
-                }
+                string newInclude = Uri.UnescapeDataString(GetBaseUri(project).MakeRelativeUri(this.AbsolutePath).ToString().Replace('/', Path.DirectorySeparatorChar));
+                string newLinkPath = this.IsLink ? LinkPath : Include;
 
                 XElement retval = new XElement(Constants.ns + "Compile",
                     new XAttribute("Include", newInclude),
@@ -121,38 +129,34 @@ namespace MPSettings.Tools.ProjectBuilder
                 return retval;
             }
 
-            private static string FixPath(string pathToFile, string pathToParentProject, string pathToChildProject)
+            private Uri GetBaseUri(Project project)
             {
-                string ParentDirectory = Path.GetDirectoryName(pathToParentProject);
-                string ChildDirectory = Path.GetDirectoryName(pathToChildProject);
-
-                string combinedpath = Path.Combine(ParentDirectory, pathToFile);
-
-                Uri pathUri = new Uri(combinedpath);
-                // Folders must end in a slash
-                if (!ChildDirectory.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                string basedirectory = Path.GetDirectoryName(project.PathToProjectFile);
+                if (!basedirectory.EndsWith(Path.DirectorySeparatorChar.ToString()))
                 {
-                    ChildDirectory += Path.DirectorySeparatorChar;
+                    basedirectory += Path.DirectorySeparatorChar;
                 }
-                Uri folderUri = new Uri(ChildDirectory);
-                return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
+
+                return new Uri(basedirectory);
             }
 
-            private string AbsolutePath
+            private Uri AbsolutePath
             {
-                get 
+                get
                 {
-                    string basedirectory = Path.GetDirectoryName(myproject.PathToProjectFile);
-                    if (!basedirectory.EndsWith(Path.DirectorySeparatorChar.ToString()))
-                    {
-                        basedirectory += Path.DirectorySeparatorChar;
-                    }
-
-                    Uri baseUri = new Uri(basedirectory);
+                    Uri baseUri = GetBaseUri(myproject);
                     Uri fullUri = new Uri(baseUri, Include);
 
-                    return fullUri.ToString();
+                    return fullUri;
                 }
+            }
+
+            public bool IsBasedIn(Project project)
+            {
+                Uri baseUri = GetBaseUri(project);
+                Uri fullUri = AbsolutePath;
+
+                return baseUri.IsBaseOf(fullUri);
             }
 
 
@@ -161,57 +165,41 @@ namespace MPSettings.Tools.ProjectBuilder
                 if (other == null)
                     return false;
 
-                if (this.IsLink && other.IsLink)
-                {
-                    return this.AbsolutePath.Equals(other.AbsolutePath);
-                }
-                else if (this.IsLink && !other.IsLink)
-                {
-                    return this.AbsolutePath.Equals(other.AbsolutePath);
-                }
-                else if (!this.IsLink && other.IsLink)
-                {
-                    return this.AbsolutePath.Equals(other.AbsolutePath);
-                }
-                else if (!this.IsLink && !other.IsLink)
+                if (!this.IsLink && !other.IsLink)
                 {
                     return this.Include.Equals(other.Include);
                 }
 
-                throw new NotSupportedException();
+                return this.AbsolutePath.Equals(other.AbsolutePath);
+            }
 
+            public override bool Equals(Object obj)
+            {
+                CompileUnit personObj = obj as CompileUnit;
 
-                //string nameA = this.IsLink ? this.LinkPath : this.Include;
-                //string nameB = other.IsLink ? other.LinkPath : other.Include;
-
-                //return nameA.Equals(nameB);
-
-
-
-                
-                //return this.AbsolutePath.Equals(other.AbsolutePath);
+                return personObj == null
+                    ? false
+                    : this.Equals(personObj);
             }
 
             public override int GetHashCode()
             {
                 return this.AbsolutePath.GetHashCode();
             }
-
-
         }
 
-        private sealed class CompileUnitEqualityComparer : EqualityComparer<CompileUnit>
-        {
-            public override bool Equals(CompileUnit x, CompileUnit y)
-            {
-                return x.Equals(y);
-            }
+        //private sealed class CompileUnitEqualityComparer : EqualityComparer<CompileUnit>
+        //{
+        //    public override bool Equals(CompileUnit x, CompileUnit y)
+        //    {
+        //        return x.Equals(y);
+        //    }
 
-            public override int GetHashCode(CompileUnit obj)
-            {
-                return obj.GetHashCode();
-            }
-        }
+        //    public override int GetHashCode(CompileUnit obj)
+        //    {
+        //        return obj.GetHashCode();
+        //    }
+        //}
 
 
     }
