@@ -1,7 +1,9 @@
 ﻿using MPSettings.Provider;
 using MPSettings.Provider.Xml;
+using MPSettings.Util;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -17,7 +19,7 @@ namespace MPSettings
             {
                 if (_DefaultSettingsProvider == null)
                 {
-                    _DefaultSettingsProvider = new XmlSettingsProvider();
+                    _DefaultSettingsProvider = XmlSettingsProvider.CreateXmlSettingsProvider();
                 }
                 return _DefaultSettingsProvider;
             }
@@ -25,7 +27,7 @@ namespace MPSettings
         }
 
 
-        internal IEnumerable<ISettingsProvider> GetProviders() //MP: startegy maybe here
+        internal IEnumerable<ISettingsProvider> GetProviders() 
         {
             yield return DefaultSettingsProvider;
         }

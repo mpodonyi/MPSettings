@@ -9,8 +9,16 @@ namespace MPSettings.Core
 {
     public interface ISetting
     {
-        void Initialize(SettingsFactory repository);
+        void Initialize(ISettingsRepository repository);
     }
+
+    public interface ISettingsRepository 
+    {
+        T Get<T>(string name);
+
+        void Set<T>(string name, T value);
+    }
+
 
     internal static class PropNameHelper
     {
@@ -21,7 +29,7 @@ namespace MPSettings.Core
     }
 
 
-    public class SettingsFactory
+    internal class SettingsRepository : ISettingsRepository
     {
         private readonly SettingsProviderList ApplicationSettingsProvider;
 
@@ -34,13 +42,13 @@ namespace MPSettings.Core
 
 
 
-        internal SettingsFactory(SettingsProviderList provider)
+        internal SettingsRepository(SettingsProviderList provider)
         {
             ApplicationSettingsProvider = provider;
 
         }
 
-        internal IDictionary<PropertyInfo, SettingsPropertyValue> GetPropertyValues(ICollection<PropertyInfo> propInfos)
+        internal IEnumerable<SettingsPropertyValue> GetPropertyValues(IEnumerable<PropertyInfo> propInfos)
         {
             List<SettingsProperty> properties = (from i in propInfos
                                                   select FromPropertyInfo(i)).ToList();
@@ -58,46 +66,34 @@ namespace MPSettings.Core
                 properties = properties.Except(retval.Select(obj => obj.SettingsProperty)).ToList();
             }
 
-            return retval.ToDictionary(obj => obj.SettingsProperty.Context["propinfo"] as PropertyInfo, obj => obj);
+            return retval;
         }
 
         private SettingsProperty FromPropertyInfo(PropertyInfo propertyInfo)
         {
+            //check that not in cache
             return new SettingsProperty(propertyInfo.Name, propertyInfo.PropertyType, new Dictionary<string, object> { { "propinfo", propertyInfo } });
         }
 
-        //internal bool TryGet(Type typeOfClass, Type typeOfProperty, string name, string root, out object result)
-        //{
+
+        
 
 
 
-        //}
+        public T Get<T>(string name)
+        {
+            throw new NotImplementedException();
+        }
 
-
-        //protected T Get<T>(string name)
-        //{
-        //    var retval = ApplicationSettingsPropertyValues.FirstOrDefault(o => o.SettingsProperty.Name == name);
-        //    //foreach(var provider in ApplicationSettingsProvider)
-        //    //{
-        //    // //   provider.
-
-
-
-        //    //}
+        public void Set<T>(string name, T value)
+        {
+            throw new NotImplementedException();
+        }
 
 
 
 
-        //    return default(T);
-        //}
-
-        //protected void Set<T>(string name, T value)
-        //{
-
-        //}
-
-
-
+    
     }
 
 

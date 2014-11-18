@@ -21,17 +21,10 @@ namespace MPSettings.Test.UnitTests
         [Fact]
         public void TestMethodX()
         {
-            string apppath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
-            string combinedpath = Path.Combine(apppath, "settings.config");
-
-            SettingsProviders.AppSettingsProvider.DefaultSettingsProvider.Initialize(new Dictionary<string, object> { { "path", combinedpath } });
-
             TestSetting set = SettingsManager.Instance.GetSettings<TestSetting>();
 
             set.Foo.Should().Be(6);
             set.Bar.Should().Be("Mike");
-
-
         }
     }
 }

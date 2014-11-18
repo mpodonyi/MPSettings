@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MPSettings.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,36 +9,33 @@ using System.Xml.Linq;
 
 namespace MPSettings.Provider.Xml
 {
-    class XmlSettingsProvider : SettingsProvider
+    public class XmlSettingsProvider : SettingsProvider
     {
+        private readonly XDocument XDoc;
 
-#if NET
-        private XDocument GetXDocument()
+        private XmlSettingsProvider(Stream xmlStream)
         {
-            string apppath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
-            string combinedpath = System.IO.Path.Combine(apppath, "settings.config");
-            return XDocument.Load(combinedpath);
-        }
-#else
-        private XDocument GetXDocument()
-        { 
-            return null;
-        }
-#endif
-
-        private void Load()
-        {
-            XDocument xdoc = GetXDocument();
+            XDoc = XDocument.Load(xmlStream);
         }
 
         public override IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection)
         {
-            throw new NotImplementedException();
+            var root = XDoc.Root;
+            foreach (var prop in collection)
+            {
+                yield return new SettingsPropertyValue(prop) { SerializedValue = root.Element(prop.Name).Value };
+            }
         }
 
         public override void SetPropertyValues(SettingsContext context, IEnumerable<SettingsPropertyValue> collection)
         {
             throw new NotImplementedException();
+        }
+
+        internal static XmlSettingsProvider CreateXmlSettingsProvider()
+        {
+            Stream stream = PathHelper.GetApplicationFileStream("settings.config", true);
+            return new XmlSettingsProvider(stream);
         }
     }
 }

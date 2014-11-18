@@ -13,7 +13,6 @@ namespace MPSettings
     public sealed class SettingsManager
     {
         private static SettingsManager _Instance = new SettingsManager();
-
         public static SettingsManager Instance
         {
             get
@@ -22,28 +21,37 @@ namespace MPSettings
             }
         }
 
+        private SettingsRepository SetRepo;
+
+        private SettingsManager()
+        {
+            SetRepo = new SettingsRepository(SettingsProviders.AppSettingsProvider);
+        }
+
+
+
+
         public T GetSettings<T>() where T : new()
         {
             //ISettingsAdapter adap = new DotNetSettingsAdapter(new DotNetSettingsProviderAdapter(_SettingsProviders), "");
-            var retval = new T();
-            ISetting settings = retval as ISetting;
+            var obj = new T();
+            ISetting settings = obj as ISetting;
             if (settings != null)
             {
-                SettingsFactory adap = new SettingsFactory(SettingsProviders.AppSettingsProvider);
-                settings.Initialize(adap);
+                settings.Initialize(SetRepo);
                 
             }
             else
             {
-                SettingsFactory adap = new SettingsFactory(SettingsProviders.AppSettingsProvider);
-                var pa = Reflection.Reflector.GetProperties(retval);
-                foreach (var prop in adap.GetPropertyValues(pa))
+                foreach (var propValue in SetRepo.GetPropertyValues(Reflection.Reflector.GetProperties(obj)))
                 {
-                    Reflection.Reflector.SetProperty(retval, prop.Key, prop.Value.PropertyValue);
+                    Reflection.Reflector.SetProperty(obj,
+                        propValue.SettingsProperty.Context["propinfo"] as PropertyInfo,
+                        propValue.PropertyValue);
                 }
             }
 
-            return retval;
+            return obj;
         }
        
     }

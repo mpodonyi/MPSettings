@@ -82,12 +82,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MPSettings\MPSettings.csproj">
-      <Project>{6304171e-0cd6-4fb8-a993-25082129e753}</Project>
-      <Name>MPSettings</Name>
+    <ProjectReference Include="..\MPSettings.Net\MPSettings.Net.csproj">
+      <Project>{7ca20d3c-1d90-432e-aa42-abab330c2a07}</Project>
+      <Name>MPSettings.Net</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

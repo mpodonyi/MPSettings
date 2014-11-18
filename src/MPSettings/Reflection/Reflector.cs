@@ -6,20 +6,10 @@ using System.Text;
 
 namespace MPSettings.Reflection
 {
-    //internal class PropertyAccessor
-    //{
-    //    public Type Type { get; set; }
-    //    public string Name { get; set; }
-    //    public object Value { get; set; }
-    //}
-
-
-
-
     static class Reflector
     {
 
-        internal static ICollection<PropertyInfo> GetProperties<T>(T obj) where T : new()
+        internal static IEnumerable<PropertyInfo> GetProperties<T>(T obj) where T : new()
         {
             List<PropertyInfo> retval = new List<PropertyInfo>();
 
@@ -32,14 +22,6 @@ namespace MPSettings.Reflection
             {
 
                 retval.Add(p);
-                //retval.Add(new PropertyAccessor { Type = p.PropertyType, Name = p.Name, Value = p.GetValue(obj, null) });
-
-                //object oldvalue = p.GetValue(obj, null);
-                //object newvalue = accessor(p.PropertyType, p.Name, oldvalue);
-                //if (oldvalue != newvalue)
-                //{
-                //    p.SetValue(obj, newvalue, null);
-                //}
             }
 
             return retval;
