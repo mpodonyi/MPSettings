@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Xml.Serialization;
 
 namespace MPSettings.Provider
 {
@@ -40,13 +44,93 @@ namespace MPSettings.Provider
 
         public SettingsProperty SettingsProperty { get; private set; }
 
-        public object PropertyValue { get; private set; }
+        private object _PropertyValue;
+        public object PropertyValue 
+        {
+            get
+            {
+                if (!_Deserialized)
+                {
+                    _PropertyValue = GetObjectFromString(SettingsProperty.PropertyType, _SerializedValue);
+                    _Deserialized = true;
+                }
 
+                //if (_PropertyValue != null && !SettingsProperty.PropertyType.IsPrimitive && !(_PropertyValue is string) && !(_PropertyValue is DateTime))
+                //{
+                //    _ChangedSinceLastSerialized = true;
+                ////    _IsDirty = true;
+                //}
 
+                return _PropertyValue; 
+            }
+             set
+            {
+                _PropertyValue = value;
+                _ChangedSinceLastSerialized = true;
+                _Deserialized = true;
+                //_IsDirty = true;
+            
+            }
+        }
+
+        private string _SerializedValue;
         public string SerializedValue
         {
-            set; private get;
-        } 
+
+             get
+            {
+                if (_ChangedSinceLastSerialized)
+                {
+                    _ChangedSinceLastSerialized = false;
+                    _SerializedValue = GetStringFromObject(SettingsProperty.PropertyType, _PropertyValue);
+                }
+            
+                return _SerializedValue; 
+            }
+            set
+            {
+                _SerializedValue = value;
+                //_Deserialized = false;
+            }
+        }
+
+         private bool _ChangedSinceLastSerialized = false; 
+         private bool _Deserialized = false;
+         private bool _IsDirty = false;
+
+        private static object GetObjectFromString(Type type, string attValue)
+        {
+            // Deal with string types 
+            if (type == typeof(string))
+                return (string)attValue;
+
+            // Return null if there is nothing to convert
+            if (attValue == null || attValue.Length < 1)
+                return null;
+
+            return Convert.ChangeType(attValue, type, CultureInfo.InvariantCulture);
+        }
+
+        private static string GetStringFromObject(Type type, object attValue)
+        {
+            // Deal with string types 
+            if (type == typeof(string) || attValue == null )
+                return (string)attValue;
+
+            try
+            {
+                return (string)Convert.ChangeType(attValue, typeof(string), CultureInfo.InvariantCulture);
+            }
+            catch (InvalidCastException)
+            {
+                XmlSerializer xs = new XmlSerializer(type);
+                StringWriter sw = new StringWriter(CultureInfo.InvariantCulture);
+
+                xs.Serialize(sw, attValue);
+                return sw.ToString();
+            
+            }
+        }
 
 
         //private object Deserialize()
