@@ -68,7 +68,7 @@ namespace MPSettings.Test.UnitTests
                 SPV.PropertyValue = t1;
                 SPV.SerializedValue.Should().Be("5");
             }
-           {
+            {
                 Char t1 = '5';
                 var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", t1.GetType(), null));
                 SPV.PropertyValue = t1;
@@ -217,7 +217,48 @@ namespace MPSettings.Test.UnitTests
                 SPV.PropertyValue = t1;
                 SPV.SerializedValue.Should().Be("ff");
             }
-            
+
+        }
+
+
+        [Fact]
+        public void ConvertNullablePrimitiveDatatypeToStringTest()
+        {
+            {
+                Int16? t1 = 5;
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(Int16?), null));
+                SPV.PropertyValue = t1;
+                SPV.SerializedValue.Should().Be("5");
+            }
+            {
+                Int16? t1 = null;
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(Int16?), null));
+                SPV.PropertyValue = t1;
+                SPV.SerializedValue.Should().BeNull();
+            }
+
+        }
+
+        [Fact]
+        public void ConvertStringToNullablePrimitiveDatatypeTest()
+        {
+            //the type returned will be the underlying type; there is no way to generate a nullable type with an underlying type "dynamically"
+            {
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(Int16?), null));
+                SPV.SerializedValue = "5";
+                ((Int16?)SPV.PropertyValue).Should().Be(5);
+            }
+            {
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(Int16?), null));
+                SPV.SerializedValue = null;
+                ((Int16?)SPV.PropertyValue).Should().NotHaveValue();
+            }
+            {
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(Int16?), null));
+                SPV.SerializedValue = "";
+                ((Int16?)SPV.PropertyValue).Should().NotHaveValue();
+            }
+
         }
 
     }

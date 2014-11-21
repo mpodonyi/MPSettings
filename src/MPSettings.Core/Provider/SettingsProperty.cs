@@ -101,15 +101,33 @@ namespace MPSettings.Provider
         private static object GetObjectFromString(Type type, string attValue)
         {
             // Deal with string types 
-            if (type == typeof(string))
-                return (string)attValue;
+            if (type == typeof(string) && (attValue == null || attValue.Length < 1))
+                return attValue;
 
             // Return null if there is nothing to convert
             if (attValue == null || attValue.Length < 1)
                 return null;
 
-            return Convert.ChangeType(attValue, type, CultureInfo.InvariantCulture);
+            if (CanConvertString(type))
+            {
+                type = Nullable.GetUnderlyingType(type) ?? type;
+                return Convert.ChangeType(attValue, type, CultureInfo.InvariantCulture) ;
+            }
+            else
+            {
+                XmlSerializer xs = new XmlSerializer(type);
+                StringReader sr = new StringReader(attValue);
+
+                return xs.Deserialize(sr);
+            }
         }
+
+        private static bool CanConvertString(Type type)
+        {
+            type = Nullable.GetUnderlyingType(type) ?? type;
+            return type.IsPrimitive || type == typeof(string) || type == typeof(decimal);
+        }
+
 
         private static string GetStringFromObject(Type type, object attValue)
         {
@@ -117,18 +135,17 @@ namespace MPSettings.Provider
             if (type == typeof(string) || attValue == null )
                 return (string)attValue;
 
-            try
+            if (CanConvertString(type))
             {
                 return (string)Convert.ChangeType(attValue, typeof(string), CultureInfo.InvariantCulture);
             }
-            catch (InvalidCastException)
+            else
             {
                 XmlSerializer xs = new XmlSerializer(type);
                 StringWriter sw = new StringWriter(CultureInfo.InvariantCulture);
-
+                
                 xs.Serialize(sw, attValue);
                 return sw.ToString();
-            
             }
         }
 
