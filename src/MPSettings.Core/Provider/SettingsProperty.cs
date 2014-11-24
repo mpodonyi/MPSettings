@@ -5,15 +5,16 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace MPSettings.Provider
 {
     public class SettingsContext : Dictionary<object, object>
-    { 
-    
-    
-    
+    {
+
+
+
     }
 
     public class SettingsProperty
@@ -26,7 +27,7 @@ namespace MPSettings.Provider
         }
 
         public virtual IDictionary<string, object> Context { get; set; }
-        
+
         public virtual string Name { get; set; }
         public virtual Type PropertyType { get; set; }
 
@@ -45,7 +46,7 @@ namespace MPSettings.Provider
         public SettingsProperty SettingsProperty { get; private set; }
 
         private object _PropertyValue;
-        public object PropertyValue 
+        public object PropertyValue
         {
             get
             {
@@ -61,15 +62,15 @@ namespace MPSettings.Provider
                 ////    _IsDirty = true;
                 //}
 
-                return _PropertyValue; 
+                return _PropertyValue;
             }
-             set
+            set
             {
                 _PropertyValue = value;
                 _ChangedSinceLastSerialized = true;
                 _Deserialized = true;
                 //_IsDirty = true;
-            
+
             }
         }
 
@@ -77,15 +78,15 @@ namespace MPSettings.Provider
         public string SerializedValue
         {
 
-             get
+            get
             {
                 if (_ChangedSinceLastSerialized)
                 {
                     _ChangedSinceLastSerialized = false;
                     _SerializedValue = GetStringFromObject(SettingsProperty.PropertyType, _PropertyValue);
                 }
-            
-                return _SerializedValue; 
+
+                return _SerializedValue;
             }
             set
             {
@@ -94,24 +95,34 @@ namespace MPSettings.Provider
             }
         }
 
-         private bool _ChangedSinceLastSerialized = false; 
-         private bool _Deserialized = false;
-         private bool _IsDirty = false;
+        private bool _ChangedSinceLastSerialized = false;
+        private bool _Deserialized = false;
+        private bool _IsDirty = false;
 
         private static object GetObjectFromString(Type type, string attValue)
         {
             // Deal with string types 
             if (type == typeof(string) && (attValue == null || attValue.Length < 1))
-                return attValue;
+                return "";
 
             // Return null if there is nothing to convert
             if (attValue == null || attValue.Length < 1)
                 return null;
 
-            if (CanConvertString(type))
+            Type type2 = CanConvertString(type);
+
+            if (type2 != null)
             {
-                type = Nullable.GetUnderlyingType(type) ?? type;
-                return Convert.ChangeType(attValue, type, CultureInfo.InvariantCulture) ;
+                if (type2 == typeof(DateTime))
+                {
+                    return DateTime.Parse(attValue, DateTimeFormatInfo.InvariantInfo);
+                }
+                if (type2 == typeof(DateTimeOffset))
+                {
+                    return DateTimeOffset.Parse(attValue, DateTimeFormatInfo.InvariantInfo);
+                }
+
+                return Convert.ChangeType(attValue, type2, CultureInfo.InvariantCulture);
             }
             else
             {
@@ -120,30 +131,47 @@ namespace MPSettings.Provider
 
                 return xs.Deserialize(sr);
             }
+
+            //   if (val != null && !Property.PropertyType.IsAssignableFrom(val.GetType())) // is it the correct type
+            //val = null; 
         }
 
-        private static bool CanConvertString(Type type)
+        private static Type CanConvertString(Type type)
         {
             type = Nullable.GetUnderlyingType(type) ?? type;
-            return type.IsPrimitive || type == typeof(string) || type == typeof(decimal);
+            return type.IsPrimitive
+                || type == typeof(string)
+                || type == typeof(decimal)
+                || type == typeof(DateTime)
+                || type == typeof(DateTimeOffset)
+                ? type
+                : null;
         }
 
+        
 
         private static string GetStringFromObject(Type type, object attValue)
         {
             // Deal with string types 
-            if (type == typeof(string) || attValue == null )
+            if (type == typeof(string) || attValue == null)
                 return (string)attValue;
 
-            if (CanConvertString(type))
+            Type type2 = CanConvertString(type);
+
+            if (type2 != null)
             {
+                if (type2 == typeof(DateTime) || type2 == typeof(DateTimeOffset))
+                {
+                    return ((IFormattable)attValue).ToString("o", DateTimeFormatInfo.InvariantInfo);
+                }
+
                 return (string)Convert.ChangeType(attValue, typeof(string), CultureInfo.InvariantCulture);
             }
             else
             {
                 XmlSerializer xs = new XmlSerializer(type);
                 StringWriter sw = new StringWriter(CultureInfo.InvariantCulture);
-                
+
                 xs.Serialize(sw, attValue);
                 return sw.ToString();
             }

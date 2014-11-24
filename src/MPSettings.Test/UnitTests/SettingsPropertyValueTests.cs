@@ -6,13 +6,15 @@ using System.Text;
 using Xunit;
 using MPS = MPSettings.Provider;
 using FluentAssertions;
+using System.Globalization;
+using System.Xml.Linq;
 
 namespace MPSettings.Test.UnitTests
 {
     public class SettingsPropertyValueTests
     {
         [Fact]
-        public void ConvertPrimitiveDatatypeToStringTest()
+        public void Convert_PrimitiveDatatypeToString_Test()
         {
             {
                 Boolean t1 = true;
@@ -113,7 +115,7 @@ namespace MPSettings.Test.UnitTests
         }
 
         [Fact]
-        public void ConvertStringToPrimitiveDatatypeTest()
+        public void Convert_StringToPrimitiveDatatype_Test()
         {
             {
                 var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(Boolean), null));
@@ -184,7 +186,8 @@ namespace MPSettings.Test.UnitTests
                 var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(string), null));
                 SPV.SerializedValue = null;
                 //SPV.PropertyValue.Should().BeOfType<string>().Which.Should().BeNull();
-                SPV.PropertyValue.Should().BeNull();
+                SPV.PropertyValue.Should().BeOfType<string>().Which.Should().Be("");
+                //SPV.PropertyValue.Should().BeNull();
             }
             {
                 var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(string), null));
@@ -202,27 +205,160 @@ namespace MPSettings.Test.UnitTests
         public class Test
         {
             public int foo;
+            public long Bar { get; set; }
         }
 
 
+        private static readonly string CompareValueString = @"<?xml version=""1.0"" encoding=""utf-16""?>
+                                                    <Test xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+                                                    <foo>44</foo>
+                                                    <Bar>3</Bar>
+                                                </Test>";
+        private static readonly XDocument CompareValue = XDocument.Parse(CompareValueString);
+
         [Fact]
-        public void ConvertNonPrimitiveDatatypeToStringTest()
+        public void Convert_NonPrimitiveDatatypeToString_Test()
         {
             {
                 Test t1 = new Test();
                 t1.foo = 44;
+                t1.Bar = 3;
 
-
-                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", t1.GetType(), null));
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(Test), null));
                 SPV.PropertyValue = t1;
-                SPV.SerializedValue.Should().Be("ff");
+                XDocument.Parse(SPV.SerializedValue).Should().BeEquivalentTo(CompareValue);
             }
+            {
+                Test t1 = new Test();
+                t1.foo = 44;
+                t1.Bar = 3;
 
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(Test), null));
+                SPV.PropertyValue = null;
+                SPV.SerializedValue.Should().BeNull();
+            }
+        }
+
+        [Fact]
+        public void Convert_StringToNonPrimitiveDatatype_Test()
+        {
+            {
+                Test t1 = new Test();
+                t1.foo = 44;
+                t1.Bar = 3;
+
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(Test), null));
+                SPV.SerializedValue = CompareValueString;
+                SPV.PropertyValue.Should().BeOfType<Test>().Which.ShouldBeEquivalentTo(t1);
+            }
+            {
+                Test t1 = new Test();
+                t1.foo = 44;
+                t1.Bar = 3;
+
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(Test), null));
+                SPV.SerializedValue = null;
+                SPV.PropertyValue.Should().BeNull();
+            }
         }
 
 
         [Fact]
-        public void ConvertNullablePrimitiveDatatypeToStringTest()
+        public void Convert_DateTimeToString_Test()
+        {
+            {
+                DateTime t1 = new DateTime(2014, 11, 24, 11, 40, 2, 3, DateTimeKind.Unspecified);
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(DateTime), null));
+                SPV.PropertyValue = t1;
+                SPV.SerializedValue.Should().Be("2014-11-24T11:40:02.0030000");
+            }
+            {
+                DateTime? t1 = new DateTime(2014, 11, 24, 11, 40, 2, 3, DateTimeKind.Unspecified);
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(DateTime?), null));
+                SPV.PropertyValue = t1;
+                SPV.SerializedValue.Should().Be("2014-11-24T11:40:02.0030000");
+            }
+        }
+
+        [Fact]
+        public void Convert_StringToDateTime_Test()
+        {
+            {
+                string t1 = "2014-11-24T11:40:02.0030000";
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(DateTime), null));
+                SPV.SerializedValue = t1;
+                SPV.PropertyValue.Should().BeOfType<DateTime>().Which.Should().Be(new DateTime(2014, 11, 24, 11, 40, 2, 3, DateTimeKind.Unspecified));
+            }
+            {
+                string t1 = "2014-11-24T11:40:02.0030000";
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(DateTime?), null));
+                SPV.SerializedValue = t1;
+                SPV.PropertyValue.Should().BeOfType<DateTime>().Which.Should().Be(new DateTime(2014, 11, 24, 11, 40, 2, 3, DateTimeKind.Unspecified));
+            }
+            {
+                string t1 = null;
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(DateTime?), null));
+                SPV.SerializedValue = t1;
+                SPV.PropertyValue.Should().BeNull();
+            }
+            {
+                string t1 = "";
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(DateTime?), null));
+                SPV.SerializedValue = t1;
+                SPV.PropertyValue.Should().BeNull();
+            }
+        }
+
+        [Fact]
+        public void Convert_DateTimeOffsetToString_Test()
+        {
+            {
+                DateTimeOffset t1 = new DateTimeOffset(2014, 11, 24, 11, 40, 2, 3, TimeSpan.Zero);
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(DateTimeOffset), null));
+                SPV.PropertyValue = t1;
+                SPV.SerializedValue.Should().Be("2014-11-24T11:40:02.0030000+00:00");
+            }
+            {
+                DateTimeOffset? t1 = new DateTimeOffset(2014, 11, 24, 11, 40, 2, 3, TimeSpan.Zero);
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(DateTimeOffset?), null));
+                SPV.PropertyValue = t1;
+                SPV.SerializedValue.Should().Be("2014-11-24T11:40:02.0030000+00:00");
+            }
+        }
+
+        [Fact]
+        public void Convert_StringToDateTimeOffset_Test()
+        {
+            {
+                string t1 = "2014-11-24T11:40:02.0030000";
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(DateTimeOffset), null));
+                SPV.SerializedValue = t1;
+                SPV.PropertyValue.Should().BeOfType<DateTimeOffset>().Which.Should().Be(new DateTimeOffset(2014, 11, 24, 11, 40, 2, 3, TimeSpan.Zero));
+            }
+            {
+                string t1 = "2014-11-24T11:40:02.0030000";
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(DateTimeOffset?), null));
+                SPV.SerializedValue = t1;
+                SPV.PropertyValue.Should().BeOfType<DateTimeOffset>().Which.Should().Be(new DateTimeOffset(2014, 11, 24, 11, 40, 2, 3, TimeSpan.Zero));
+            }
+            {
+                string t1 = null;
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(DateTimeOffset?), null));
+                SPV.SerializedValue = t1;
+                SPV.PropertyValue.Should().BeNull();
+            }
+            {
+                string t1 = "";
+                var SPV = new MPS.SettingsPropertyValue(new MPS.SettingsProperty("whatever", typeof(DateTimeOffset?), null));
+                SPV.SerializedValue = t1;
+                SPV.PropertyValue.Should().BeNull();
+            }
+        }
+
+
+
+        [Fact]
+        public void Convert_NullablePrimitiveDatatypeToString_Test()
         {
             {
                 Int16? t1 = 5;
@@ -240,7 +376,7 @@ namespace MPSettings.Test.UnitTests
         }
 
         [Fact]
-        public void ConvertStringToNullablePrimitiveDatatypeTest()
+        public void Convert_StringToNullablePrimitiveDatatype_Test()
         {
             //the type returned will be the underlying type; there is no way to generate a nullable type with an underlying type "dynamically"
             {
