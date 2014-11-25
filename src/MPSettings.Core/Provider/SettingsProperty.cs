@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Xml;
@@ -17,9 +18,35 @@ namespace MPSettings.Provider
 
     }
 
+
+    public struct SettingsPropertyName
+    {
+        private readonly string _Name;
+
+        public SettingsPropertyName(string name)
+        {
+            _Name = name.Trim().Trim('.');
+        }
+
+
+        public static implicit operator SettingsPropertyName(string name)
+        {
+            return new SettingsPropertyName(name);
+        }
+
+        // overload operator + 
+        public static SettingsPropertyName operator +(SettingsPropertyName a, SettingsPropertyName b)
+        {
+            return new SettingsPropertyName(a._Name + '.' + b._Name);
+        }
+    
+    }
+
+
     public class SettingsProperty
     {
-        public SettingsProperty(string name, Type propertyType, IDictionary<string, object> context)
+
+        public SettingsProperty(SettingsPropertyName name, Type propertyType, IDictionary<string, object> context)
         {
             Name = name;
             PropertyType = propertyType;
@@ -28,7 +55,7 @@ namespace MPSettings.Provider
 
         public virtual IDictionary<string, object> Context { get; set; }
 
-        public virtual string Name { get; set; }
+        public virtual SettingsPropertyName Name { get; set; }
         public virtual Type PropertyType { get; set; }
 
         //public virtual bool IsUserProp { get; set; }
@@ -148,7 +175,7 @@ namespace MPSettings.Provider
                 : null;
         }
 
-        
+
 
         private static string GetStringFromObject(Type type, object attValue)
         {

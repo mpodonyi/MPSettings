@@ -12,22 +12,16 @@ namespace MPSettings
 {
     public sealed class SettingsManager
     {
-        private static SettingsManager _Instance = new SettingsManager();
-        public static SettingsManager Instance
-        {
-            get
-            {
-                return _Instance;
-            }
-        }
+        private static readonly Lazy<SettingsManager> lazy = new Lazy<SettingsManager>(() => new SettingsManager());
 
-        private SettingsRepository SetRepo;
+        public static SettingsManager Instance { get { return lazy.Value; } }
+
+        private readonly SettingsRepository SetRepo;
 
         private SettingsManager()
         {
             SetRepo = new SettingsRepository(SettingsProviders.AppSettingsProvider);
         }
-
 
 
 

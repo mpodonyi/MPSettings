@@ -20,13 +20,7 @@ namespace MPSettings.Core
     }
 
 
-    internal static class PropNameHelper
-    {
-        internal static string BuildName(params string[] values)
-        {
-            return string.Join(".", values);
-        }
-    }
+   
 
 
     internal class SettingsRepository : ISettingsRepository
@@ -45,13 +39,12 @@ namespace MPSettings.Core
         internal SettingsRepository(SettingsProviderList provider)
         {
             ApplicationSettingsProvider = provider;
-
+            
         }
 
-        internal IEnumerable<SettingsPropertyValue> GetPropertyValues(IEnumerable<PropertyInfo> propInfos)
+        internal IEnumerable<SettingsPropertyValue> GetPropertyValues(IEnumerable<SettingsProperty> propInfos)
         {
-            List<SettingsProperty> properties = (from i in propInfos
-                                                  select FromPropertyInfo(i)).ToList();
+            List<SettingsProperty> properties = propInfos.ToList();
 
             List<SettingsPropertyValue> retval = new List<SettingsPropertyValue>();
 
@@ -69,11 +62,7 @@ namespace MPSettings.Core
             return retval;
         }
 
-        private SettingsProperty FromPropertyInfo(PropertyInfo propertyInfo)
-        {
-            //check that not in cache
-            return new SettingsProperty(propertyInfo.Name, propertyInfo.PropertyType, new Dictionary<string, object> { { "propinfo", propertyInfo } });
-        }
+      
 
 
         
