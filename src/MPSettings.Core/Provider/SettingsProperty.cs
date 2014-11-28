@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace MPSettings.Provider
 
     }
 
-
+    [DebuggerDisplay("{_Name}")]
     public struct SettingsPropertyName
     {
         private readonly string _Name;
@@ -26,6 +27,26 @@ namespace MPSettings.Provider
         public SettingsPropertyName(string name)
         {
             _Name = name.Trim().Trim('.');
+        }
+
+        public string Name
+        {
+            get
+            {
+                var lastindex = _Name.LastIndexOf('.');
+
+                return lastindex == -1
+                    ? _Name
+                    : _Name.Substring(lastindex+1);
+            }
+        }
+
+        public string[] Path
+        {
+            get
+            {
+                return _Name.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+            }
         }
 
 
@@ -39,23 +60,23 @@ namespace MPSettings.Provider
         {
             return new SettingsPropertyName(a._Name + '.' + b._Name);
         }
-    
+
     }
 
-
+    [DebuggerDisplay("PropertyName = {PropertyName._Name}; PropertyType = {PropertyType}")]
     public class SettingsProperty
     {
 
         public SettingsProperty(SettingsPropertyName name, Type propertyType, IDictionary<string, object> context)
         {
-            Name = name;
+            PropertyName = name;
             PropertyType = propertyType;
             Context = context;
         }
 
         public virtual IDictionary<string, object> Context { get; set; }
 
-        public virtual SettingsPropertyName Name { get; set; }
+        public virtual SettingsPropertyName PropertyName { get; set; }
         public virtual Type PropertyType { get; set; }
 
         //public virtual bool IsUserProp { get; set; }
@@ -163,7 +184,7 @@ namespace MPSettings.Provider
             //val = null; 
         }
 
-        private static Type CanConvertString(Type type)
+        internal static Type CanConvertString(Type type)
         {
             type = Nullable.GetUnderlyingType(type) ?? type;
             return type.IsPrimitive

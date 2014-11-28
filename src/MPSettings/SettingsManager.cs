@@ -28,58 +28,24 @@ namespace MPSettings
         public T GetSettings<T>() where T : new()
         {
             //ISettingsAdapter adap = new DotNetSettingsAdapter(new DotNetSettingsProviderAdapter(_SettingsProviders), "");
-
-            var obj = new T();
-            ISetting settings = obj as ISetting;
-            if (settings != null)
+            
+            
+            if (typeof(ISetting).IsAssignableFrom(typeof(T)))
             {
+                T retval = new T();
+                ISetting settings = retval as ISetting;
+
                 settings.Initialize(SetRepo);
+
+                return retval;
             }
             else
             {
-                List<SettingsProperty> settproplist = new List<SettingsProperty>();
-
-                NewMethod(obj, settproplist);
-
-                foreach (var propValue in SetRepo.GetPropertyValues(settproplist))
-                {
-                    Reflection.Reflector.SetProperty(
-                        propValue.SettingsProperty.Context["_propobject"],
-                        propValue.SettingsProperty.Context["_propinfo"] as PropertyInfo,
-                        propValue.PropertyValue);
-                }
-            }
-
-            return obj;
-        }
-
-        private static void NewMethod(object obj, List<SettingsProperty> settproplist, string pre) 
-        {
-            foreach (var propinfo in Reflection.Reflector.GetProperties(obj))
-            {
-                if (Reflection.Reflector.IsSimpleType(propinfo))
-                {
-                    settproplist.Add(SettingsPropertyCreateFrom(propinfo, obj, pre));
-                }
-                else
-                {
-                    Type declType = propinfo.PropertyType;
-                    object obj2 = Activator.CreateInstance(declType);
-                    propinfo.SetValue(obj, obj2, null);
-
-                    NewMethod(obj2, settproplist, pre + propinfo.Name);
-
-
-
-                }
+                return Reflection.Reflector.GetSettingsProperties<T>(o=>SetRepo.GetPropertyValues(o));
             }
         }
 
-        private static SettingsProperty SettingsPropertyCreateFrom(PropertyInfo propertyInfo, object propertyObject, string pre)
-        {
-            return new SettingsProperty(pre+"."+propertyInfo.Name, propertyInfo.PropertyType, new Dictionary<string, object> { { "_propinfo", propertyInfo }, { "_propobject", propertyObject } });
-        }
-
+     
 
     }
 
