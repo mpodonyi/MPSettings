@@ -17,6 +17,9 @@ namespace MPSettings.Reflection
 
         private static IEnumerable<PropertyInfo> GetProperties(Type type) 
         {
+          
+
+
             return from i in type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                                                    where i.GetGetMethod(false) != null && i.GetSetMethod(false) != null
                                                         && i.CanRead && i.CanWrite

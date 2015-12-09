@@ -84,13 +84,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MPSettings.Core\MPSettings.Core.csproj">
-      <Project>{5b91e12a-ef73-4c8b-a1e0-6d484e37c8dc}</Project>
-      <Name>MPSettings.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MPSettings.Net\MPSettings.Net.csproj">
-      <Project>{7ca20d3c-1d90-432e-aa42-abab330c2a07}</Project>
-      <Name>MPSettings.Net</Name>
+    <ProjectReference Include="..\MPSettings\MPSettings.csproj">
+      <Project>{6304171e-0cd6-4fb8-a993-25082129e753}</Project>
+      <Name>MPSettings</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
