@@ -1,21 +1,36 @@
-﻿using MPSettings.Util;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using MPSettings.Core;
+using MPSettings.Utils;
 
 namespace MPSettings.Provider.Xml
 {
-    public class XmlSettingsProvider : SettingsProvider
+    public class XmlSettingsProvider : SettingsProviderBase
     {
-        private readonly XDocument XDoc;
+        private XDocument XDoc;
 
-        private XmlSettingsProvider(Stream xmlStream)
+        private XmlSettingsProvider()
         {
-            XDoc = XDocument.Load(xmlStream);
+            
+        }
+
+        public override void Initialize(IDictionary<string, object> namevalue)
+        {
+            object datastream = namevalue["dataStream"];
+
+            if(datastream ==null)
+                throw new Exception(); //MP: work here
+
+            using (Stream xmlStream = datastream as Stream)
+            {
+                XDoc = XDocument.Load(xmlStream);
+            }
         }
 
         public override IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection)
@@ -23,19 +38,24 @@ namespace MPSettings.Provider.Xml
             var root = XDoc.Root;
             foreach (var prop in collection)
             {
-                yield return new SettingsPropertyValue(prop) { SerializedValue = root.Element(prop.Name).Value };
+                XElement elem=root ;
+
+                for (int index = 1; index < prop.PropertyName.PathParts.Length; index++)
+                {
+                    string part = prop.PropertyName.PathParts[index];
+                    elem = elem.Element(part);
+                }
+
+                if (elem != null)
+                {
+                    yield return new SettingsPropertyValue(prop) {SerializedValue = elem.Value};
+                }
             }
         }
-
-        public override void SetPropertyValues(SettingsContext context, IEnumerable<SettingsPropertyValue> collection)
-        {
-            throw new NotImplementedException();
-        }
-
+       
         internal static XmlSettingsProvider CreateXmlSettingsProvider()
         {
-            Stream stream = PathHelper.GetApplicationFileStream("settings.config", true);
-            return new XmlSettingsProvider(stream);
+            return new XmlSettingsProvider();
         }
     }
 }

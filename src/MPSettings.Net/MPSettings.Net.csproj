@@ -41,14 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\MPSettings\Core\ISettings.cs">
-      <Link>Core\ISettings.cs</Link>
-    </Compile>
     <Compile Include="..\MPSettings\Provider\Xml\XmlSettingsProvider.cs">
       <Link>Provider\Xml\XmlSettingsProvider.cs</Link>
-    </Compile>
-    <Compile Include="..\MPSettings\Reflection\Reflector.cs">
-      <Link>Reflection\Reflector.cs</Link>
     </Compile>
     <Compile Include="..\MPSettings\SettingsManager.cs">
       <Link>SettingsManager.cs</Link>
@@ -56,8 +50,38 @@
     <Compile Include="..\MPSettings\SettingsProviders.cs">
       <Link>SettingsProviders.cs</Link>
     </Compile>
-    <Compile Include="..\MPSettings\Util\PathHelper.cs">
-      <Link>Util\PathHelper.cs</Link>
+    <Compile Include="..\MPSettings\Core\SettingsContext.cs">
+      <Link>Core\SettingsContext.cs</Link>
+    </Compile>
+    <Compile Include="..\MPSettings\Core\SettingsPropertyName.cs">
+      <Link>Core\SettingsPropertyName.cs</Link>
+    </Compile>
+    <Compile Include="..\MPSettings\Core\SettingsPropertyValue.cs">
+      <Link>Core\SettingsPropertyValue.cs</Link>
+    </Compile>
+    <Compile Include="..\MPSettings\Core\SettingsRepository.cs">
+      <Link>Core\SettingsRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\MPSettings\Provider\ISettingsProvider.cs">
+      <Link>Provider\ISettingsProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\MPSettings\Core\SettingsProperty.cs">
+      <Link>Core\SettingsProperty.cs</Link>
+    </Compile>
+    <Compile Include="..\MPSettings\Provider\SettingsProviderBase.cs">
+      <Link>Provider\SettingsProviderBase.cs</Link>
+    </Compile>
+    <Compile Include="..\MPSettings\Provider\SettingsProviderList.cs">
+      <Link>Provider\SettingsProviderList.cs</Link>
+    </Compile>
+    <Compile Include="..\MPSettings\Utils\ObjectDictionary.cs">
+      <Link>Utils\ObjectDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\MPSettings\Utils\Reflector.cs">
+      <Link>Utils\Reflector.cs</Link>
+    </Compile>
+    <Compile Include="..\MPSettings\Utils\PathHelper.cs">
+      <Link>Utils\PathHelper.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

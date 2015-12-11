@@ -1,53 +1,31 @@
-﻿using MPSettings.Provider;
-using MPSettings.Provider.Xml;
-using MPSettings.Util;
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using MPSettings.Provider;
 
 namespace MPSettings
 {
-    public class SettingsProviderList 
-    {
-        private ISettingsProvider _DefaultSettingsProvider;
-
-        public ISettingsProvider DefaultSettingsProvider
-        {
-            get
-            {
-                if (_DefaultSettingsProvider == null)
-                {
-                    _DefaultSettingsProvider = XmlSettingsProvider.CreateXmlSettingsProvider();
-                }
-                return _DefaultSettingsProvider;
-            }
-            set { _DefaultSettingsProvider = value; }
-        }
-
-
-        internal IEnumerable<ISettingsProvider> GetProviders() 
-        {
-            yield return DefaultSettingsProvider;
-        }
-    
-    }
-
-
     public static class SettingsProviders
     {
-        private static readonly SettingsProviderList _AppSettingsProvider = new SettingsProviderList();
+        private static readonly SettingsProviderList _Providers = new SettingsProviderList();
 
-        public static SettingsProviderList AppSettingsProvider 
+        public static SettingsProviderList Providers
         {
-            get { return _AppSettingsProvider; }
+            get { return _Providers; }
+        }
+
+
+        internal static readonly IDictionary<string, object> _InitValues = new Dictionary<string, object>();
+
+        public static void AddProviderInitValue(string key, object value)
+        {
+            _InitValues.Add(key, value);
         }
 
 
 
-        
-
-      
     }
 }

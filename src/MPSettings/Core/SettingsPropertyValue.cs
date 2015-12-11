@@ -1,87 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+using System;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Xml;
 using System.Xml.Serialization;
+using MPSettings.Utils;
 
-namespace MPSettings.Provider
+namespace MPSettings.Core
 {
-    public class SettingsContext : Dictionary<object, object>
-    {
-
-
-
-    }
-
-    [DebuggerDisplay("{_Name}")]
-    public struct SettingsPropertyName
-    {
-        private readonly string _Name;
-
-        public SettingsPropertyName(string name)
-        {
-            _Name = name.Trim().Trim('.');
-        }
-
-        public string Name
-        {
-            get
-            {
-                var lastindex = _Name.LastIndexOf('.');
-
-                return lastindex == -1
-                    ? _Name
-                    : _Name.Substring(lastindex+1);
-            }
-        }
-
-        public string[] Path
-        {
-            get
-            {
-                return _Name.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-            }
-        }
-
-
-        public static implicit operator SettingsPropertyName(string name)
-        {
-            return new SettingsPropertyName(name);
-        }
-
-        // overload operator + 
-        public static SettingsPropertyName operator +(SettingsPropertyName a, SettingsPropertyName b)
-        {
-            return new SettingsPropertyName(a._Name + '.' + b._Name);
-        }
-
-    }
-
-    [DebuggerDisplay("PropertyName = {PropertyName._Name}; PropertyType = {PropertyType}")]
-    public class SettingsProperty
-    {
-
-        public SettingsProperty(SettingsPropertyName name, Type propertyType, IDictionary<string, object> context)
-        {
-            PropertyName = name;
-            PropertyType = propertyType;
-            Context = context;
-        }
-
-        public virtual IDictionary<string, object> Context { get; set; }
-
-        public virtual SettingsPropertyName PropertyName { get; set; }
-        public virtual Type PropertyType { get; set; }
-
-        //public virtual bool IsUserProp { get; set; }
-    }
-
     public class SettingsPropertyValue
     {
         public SettingsPropertyValue(SettingsProperty property)
@@ -157,7 +81,7 @@ namespace MPSettings.Provider
             if (attValue == null || attValue.Length < 1)
                 return null;
 
-            Type type2 = CanConvertString(type);
+            Type type2 = Reflector.GetSimpleType(type);
 
             if (type2 != null)
             {
@@ -184,17 +108,17 @@ namespace MPSettings.Provider
             //val = null; 
         }
 
-        internal static Type CanConvertString(Type type)
-        {
-            type = Nullable.GetUnderlyingType(type) ?? type;
-            return type.IsPrimitive
-                || type == typeof(string)
-                || type == typeof(decimal)
-                || type == typeof(DateTime)
-                || type == typeof(DateTimeOffset)
-                ? type
-                : null;
-        }
+        //internal static Type CanConvertString(Type type)
+        //{
+        //    type = Nullable.GetUnderlyingType(type) ?? type;
+        //    return type.IsPrimitive
+        //           || type == typeof(string)
+        //           || type == typeof(decimal)
+        //           || type == typeof(DateTime)
+        //           || type == typeof(DateTimeOffset)
+        //        ? type
+        //        : null;
+        //}
 
 
 
@@ -204,7 +128,7 @@ namespace MPSettings.Provider
             if (type == typeof(string) || attValue == null)
                 return (string)attValue;
 
-            Type type2 = CanConvertString(type);
+            Type type2 = Reflector.GetSimpleType(type);
 
             if (type2 != null)
             {

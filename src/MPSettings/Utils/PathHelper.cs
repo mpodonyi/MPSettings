@@ -1,13 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 
-namespace MPSettings.Util
+namespace MPSettings.Utils
 {
     public class PathHelper
     {
+       
+
+
+
+        //private static string GetCurrentAppPath
+        //{
+        //    if (!Path.IsPathRooted(sqlFile))
+        //        sqlFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, sqlFile);
+        //    return File.ReadAllText(sqlFile);
+        //}
+
+
+
+
+
 //        public static string GetAppPath()
 //        {
 
