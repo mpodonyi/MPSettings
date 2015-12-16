@@ -83,6 +83,9 @@
     <Compile Include="..\MPSettings\Utils\PathHelper.cs">
       <Link>Utils\PathHelper.cs</Link>
     </Compile>
+    <Compile Include="..\MPSettings\Dynamic\DynamicSettingsObject.cs">
+      <Link>Dynamic\DynamicSettingsObject.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MPSettings.Core\MPSettings.Core.csproj">

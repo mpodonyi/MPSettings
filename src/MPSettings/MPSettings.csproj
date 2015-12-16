@@ -37,6 +37,7 @@
     <Compile Include="Core\SettingsPropertyName.cs" />
     <Compile Include="Core\SettingsPropertyValue.cs" />
     <Compile Include="Core\SettingsRepository.cs" />
+    <Compile Include="Dynamic\DynamicSettingsObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Provider\ISettingsProvider.cs" />
     <Compile Include="Core\SettingsProperty.cs" />

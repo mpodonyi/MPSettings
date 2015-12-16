@@ -6,10 +6,13 @@ using System.Text;
 using MPSettings.Provider;
 using MPSettings.Core;
 using System.Reflection;
+using MPSettings.Dynamic;
 using MPSettings.Utils;
 
 namespace MPSettings
 {
+
+
     public sealed class SettingsManager
     {
         private static readonly Lazy<SettingsManager> lazy = new Lazy<SettingsManager>(() => new SettingsManager());
@@ -65,7 +68,11 @@ namespace MPSettings
         }
 
 
-       
+        public dynamic GetSettingsDynamic()
+        {
+            return new DynamicSettingsObject(SetRepo, "TestSetting");
+        }
+
 
 
         public T GetSettings<T>() where T : new()

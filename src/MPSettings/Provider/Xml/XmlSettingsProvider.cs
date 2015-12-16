@@ -33,18 +33,24 @@ namespace MPSettings.Provider.Xml
             }
         }
 
+        private XElement GetElement(SettingsPropertyName propName)
+        {
+            XElement elem = XDoc.Root;
+
+            for (int index = 1; index < propName.PathParts.Length; index++)
+            {
+                string part = propName.PathParts[index];
+                elem = elem.Element(part);
+            }
+
+            return elem;
+        }
+
         public override IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection)
         {
-            var root = XDoc.Root;
             foreach (var prop in collection)
             {
-                XElement elem=root ;
-
-                for (int index = 1; index < prop.PropertyName.PathParts.Length; index++)
-                {
-                    string part = prop.PropertyName.PathParts[index];
-                    elem = elem.Element(part);
-                }
+                XElement elem = GetElement(prop.PropertyName);
 
                 if (elem != null)
                 {
@@ -52,7 +58,12 @@ namespace MPSettings.Provider.Xml
                 }
             }
         }
-       
+
+        public override bool HasPath(SettingsPropertyName path)
+        {
+            return GetElement(path) != null;
+        }
+
         internal static XmlSettingsProvider CreateXmlSettingsProvider()
         {
             return new XmlSettingsProvider();

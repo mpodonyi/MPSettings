@@ -8,5 +8,7 @@ namespace MPSettings.Provider
         void Initialize(IDictionary<string, object> namevalue);
 
         IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection);
+
+        bool HasPath(SettingsPropertyName path);
     }
 }
