@@ -31,7 +31,7 @@ namespace MPSettings
         }
 
 
-        private IEnumerable<SettingsProperty> GetSettingsProperties(object baseObject, Type type, SettingsPropertyName path, PropertyInfo basePropInfo)
+        private IEnumerable<SettingsProperty> GetSettingsProperties(object baseObject, Type type, SettingsPropertyName path, PropertyInfo basePropInfo, object context)
         {
             if (Reflector.HasParameterLessDefaultConstructor(type))
             {
@@ -48,10 +48,13 @@ namespace MPSettings
                 {
                     if (Reflector.IsSimpleType(tuple.Item2))
                     {
-                        yield return new SettingsProperty(path + tuple.Item1, tuple.Item2, new Dictionary<string, object>
+                        yield return new SettingsProperty(path + tuple.Item1, tuple.Item2)
                         {
-                            {"__SettAccessor", tuple.Item3},
-                        });
+                            Context = new Dictionary<string, object>
+                            {
+                                {"__SettAccessor", tuple.Item3},
+                            }
+                        };
                     }
                     else
                     {
@@ -74,8 +77,12 @@ namespace MPSettings
         }
 
 
-
         public T GetSettings<T>() where T : new()
+        {
+            return GetSettings<T>(null);
+        }
+
+        public T GetSettings<T>(object context) where T : new()
         {
             string name = typeof (T).Name;
 

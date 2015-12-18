@@ -8,11 +8,11 @@ namespace MPSettings.Core
     public class SettingsProperty
     {
 
-        public SettingsProperty(SettingsPropertyName name, Type propertyType, IDictionary<string, object> context)
+        public SettingsProperty(SettingsPropertyName name, Type propertyType)
         {
             PropertyName = name;
             PropertyType = propertyType;   
-            Context = context;
+            //Context = context;
         }
 
         public virtual IDictionary<string, object> Context { get; set; }

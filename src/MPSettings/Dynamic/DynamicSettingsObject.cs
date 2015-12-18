@@ -37,7 +37,7 @@ namespace MPSettings.Dynamic
 
         public override bool TryConvert(ConvertBinder binder, out object result)
         {
-            SettingsPropertyValue obj = _SettRepo.GetPropertyValue(new SettingsProperty(_SettPropName, binder.ReturnType, null));
+            SettingsPropertyValue obj = _SettRepo.GetPropertyValue(new SettingsProperty(_SettPropName, binder.ReturnType));
 
             if (obj != null)
             {
