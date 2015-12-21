@@ -20,7 +20,7 @@ namespace MPSettings.Provider.Xml
             
         }
 
-        public override void Initialize(IDictionary<string, object> namevalue)
+        public override void Initialize(IReadOnlyDictionary<string, object> namevalue)
         {
             object datastream = namevalue["dataStream"];
 
@@ -39,14 +39,14 @@ namespace MPSettings.Provider.Xml
 
             for (int index = 1; index < propName.PathParts.Length; index++)
             {
-                string part = propName.PathParts[index];
+                string part = propName.PathParts[index].ToString();
                 elem = elem.Element(part);
             }
 
             return elem;
         }
 
-        public override IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection)
+        public override IEnumerable<SettingsPropertyValue> GetPropertyValues(IEnumerable<SettingsProperty> collection)
         {
             foreach (var prop in collection)
             {

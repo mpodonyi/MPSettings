@@ -8,10 +8,10 @@ namespace MPSettings.Provider
 {
     public abstract class SettingsProviderBase : ISettingsProvider
     {
-        public virtual void Initialize(IDictionary<string, object> namevalue)
+        public virtual void Initialize(IReadOnlyDictionary<string, object> namevalue)
         { }
 
-        public abstract IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection);
+        public abstract IEnumerable<SettingsPropertyValue> GetPropertyValues(IEnumerable<SettingsProperty> collection);
 
         //public abstract void SetPropertyValues(SettingsContext context, IEnumerable<SettingsPropertyValue> collection);
 

@@ -5,9 +5,9 @@ namespace MPSettings.Provider
 {
     public interface ISettingsProvider
     {
-        void Initialize(IDictionary<string, object> namevalue);
+        void Initialize(IReadOnlyDictionary<string, object> namevalue);
 
-        IEnumerable<SettingsPropertyValue> GetPropertyValue(SettingsContext context, IEnumerable<SettingsProperty> collection);
+        IEnumerable<SettingsPropertyValue> GetPropertyValues(IEnumerable<SettingsProperty> collection);
 
         bool HasPath(SettingsPropertyName path);
     }

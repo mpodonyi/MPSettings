@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using MPSettings.Provider;
@@ -23,7 +24,7 @@ namespace MPSettings.Core
             {
                 if (!IsInitialized.Contains(provider))
                 {
-                    provider.Initialize(SettingsProviders._InitValues); //MP: implement loading from xml file
+                    provider.Initialize(new ReadOnlyDictionary<string, object>(SettingsProviders._InitValues)); //MP: implement loading from xml file
                     IsInitialized.Add(provider);
                 }
 
@@ -39,7 +40,7 @@ namespace MPSettings.Core
 
             foreach (var provider in GetOrderedProviders())
             {
-                retval.AddRange(provider.GetPropertyValue(null, properties));
+                retval.AddRange(provider.GetPropertyValues(properties));
 
                 if (properties.Count == retval.Count)
                     break;
@@ -54,7 +55,7 @@ namespace MPSettings.Core
         {
             foreach (var provider in GetOrderedProviders())
             {
-                var retval = provider.GetPropertyValue(null, new[] { propInfo }).SingleOrDefault();
+                var retval = provider.GetPropertyValues(new[] { propInfo }).SingleOrDefault();
 
                 if (retval != null)
                     return retval;

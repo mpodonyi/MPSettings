@@ -31,7 +31,7 @@ namespace MPSettings
         }
 
 
-        private IEnumerable<SettingsProperty> GetSettingsProperties(object baseObject, Type type, SettingsPropertyName path, PropertyInfo basePropInfo, object context)
+        private IEnumerable<SettingsProperty> GetSettingsProperties(object baseObject, Type type, SettingsPropertyName path, PropertyInfo basePropInfo, SettingsContext context)
         {
             if (Reflector.HasParameterLessDefaultConstructor(type))
             {
@@ -41,16 +41,15 @@ namespace MPSettings
                 if (baseObject != null)
                 {
                     basePropInfo.SetValue(baseObject,obj);
-
                 }
 
                 foreach (var tuple in Reflector.GetNameAndType(type))
                 {
                     if (Reflector.IsSimpleType(tuple.Item2))
                     {
-                        yield return new SettingsProperty(path + tuple.Item1, tuple.Item2)
+                        yield return new SettingsProperty(path + tuple.Item1, tuple.Item2, new SettingsContext(context))
                         {
-                            Context = new Dictionary<string, object>
+                            InternalContext = new Dictionary<string, object>
                             {
                                 {"__SettAccessor", tuple.Item3},
                             }
@@ -58,7 +57,7 @@ namespace MPSettings
                     }
                     else
                     {
-                        foreach (var settingsProperty in GetSettingsProperties(obj, tuple.Item2, path + tuple.Item1, tuple.Item3))
+                        foreach (var settingsProperty in GetSettingsProperties(obj, tuple.Item2, path + tuple.Item1, tuple.Item3, context))
                         {
                             yield return settingsProperty;
                         }
@@ -73,7 +72,12 @@ namespace MPSettings
 
         public dynamic GetSettingsDynamic()
         {
-            return new DynamicSettingsObject(SetRepo, "TestSetting");
+            return GetSettingsDynamic(null);
+        }
+
+        public dynamic GetSettingsDynamic(object context)
+        {
+            return new DynamicSettingsObject(SetRepo, SettingsPropertyName.Root, ToSettingsContext(context));
         }
 
 
@@ -84,33 +88,38 @@ namespace MPSettings
 
         public T GetSettings<T>(object context) where T : new()
         {
-            string name = typeof (T).Name;
 
-
-            foreach (var settingsPropertyValue in SetRepo.GetPropertyValues(GetSettingsProperties(null, typeof(T), name, null)))
+            foreach (var settingsPropertyValue in SetRepo.GetPropertyValues(GetSettingsProperties(null, typeof(T), SettingsPropertyName.Root, null, ToSettingsContext(context))))
             {
-                PropertyInfo SettAccessor = settingsPropertyValue.SettingsProperty.Context["__SettAccessor"] as PropertyInfo;
+                PropertyInfo SettAccessor = settingsPropertyValue.SettingsProperty.InternalContext["__SettAccessor"] as PropertyInfo;
 
                 object obj = ObjDict.Get(settingsPropertyValue.SettingsProperty.PropertyName.Path);
 
                 SettAccessor.SetValue(obj, settingsPropertyValue.PropertyValue);
             }
 
-            return (T)ObjDict.Get(name);
-
-            //if (typeof(ISetting).IsAssignableFrom(typeof(T)))
-            //{
-            //    T retval = new T();
-            //    ISetting settings = retval as ISetting;
-
-            //    settings.Initialize(SetRepo);
-
-            //    return retval;
-            //}
-
+            return (T)ObjDict.Get(SettingsPropertyName.Root);
         }
 
 
+        private SettingsContext ToSettingsContext(object obj)
+        {
+            string stringObj = obj as string;
+
+
+            if (stringObj != null)
+                return new SettingsContext()
+                {
+                    {"key", stringObj}
+                };
+
+
+
+            return null;
+
+
+
+        }
 
     }
 

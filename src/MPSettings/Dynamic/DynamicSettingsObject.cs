@@ -13,19 +13,21 @@ namespace MPSettings.Dynamic
     {
         private readonly SettingsRepository _SettRepo;
         private readonly SettingsPropertyName _SettPropName;
+        private readonly SettingsContext _Context;
 
-        internal DynamicSettingsObject(SettingsRepository settRepo, SettingsPropertyName root)
+        internal DynamicSettingsObject(SettingsRepository settRepo, SettingsPropertyName root, SettingsContext context)
         {
             _SettRepo = settRepo;
             _SettPropName = root;
+            _Context = context;
         }
 
-        
+
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             if (_SettRepo.HasSettingsPropertyName(_SettPropName + binder.Name))
             {
-                result = new DynamicSettingsObject(_SettRepo, _SettPropName + binder.Name);
+                result = new DynamicSettingsObject(_SettRepo, _SettPropName + binder.Name, _Context);
                 return true;
             }
             else
@@ -37,7 +39,7 @@ namespace MPSettings.Dynamic
 
         public override bool TryConvert(ConvertBinder binder, out object result)
         {
-            SettingsPropertyValue obj = _SettRepo.GetPropertyValue(new SettingsProperty(_SettPropName, binder.ReturnType));
+            SettingsPropertyValue obj = _SettRepo.GetPropertyValue(new SettingsProperty(_SettPropName, binder.ReturnType, new SettingsContext(_Context)));
 
             if (obj != null)
             {
@@ -45,15 +47,8 @@ namespace MPSettings.Dynamic
                 return true;
             }
 
-
-
-
             return base.TryConvert(binder, out result);
         }
 
-        public override IEnumerable<string> GetDynamicMemberNames()
-        {
-            return base.GetDynamicMemberNames();
-        }
     }
 }
