@@ -3,6 +3,7 @@ using Xunit;
 using FluentAssertions;
 using System.IO;
 using System.Collections.Generic;
+using MPSettings.Provider;
 
 namespace MPSettings.Test.UnitTests
 {
@@ -28,10 +29,9 @@ namespace MPSettings.Test.UnitTests
 
     public class GetSettingsTests
     {
-
         static GetSettingsTests()
         {
-            var obj = File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.config"));
+            FileStream obj = File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.config"));
 
             SettingsProviders.AddProviderInitValue("dataStream", obj);
         }
@@ -43,7 +43,7 @@ namespace MPSettings.Test.UnitTests
         [Fact]
         public void Settings_GetPOCO_Test()
         {
-            TestSetting set = SettingsManager.Instance.GetSettings<TestSetting>();
+            TestSetting set = SettingsManager.Create().GetSettings<TestSetting>();
 
             set.Foo.Should().Be(6);
             set.Bar.Should().Be("Mike");
@@ -55,7 +55,7 @@ namespace MPSettings.Test.UnitTests
         [Fact]
         public void Settings_GetDynamic_Test()
         {
-            dynamic set = SettingsManager.Instance.GetSettingsDynamic();
+            dynamic set = SettingsManager.Create().GetSettingsDynamic();
 
             ((int)set.Foo).Should().Be(6);
             ((string)set.Bar).Should().Be("Mike");

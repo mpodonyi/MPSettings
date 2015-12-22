@@ -9,13 +9,13 @@ using MPSettings.Utils;
 
 namespace MPSettings.Dynamic
 {
-    class DynamicSettingsObject : DynamicObject
+    class DynamicSettingsObject<TSETT> : DynamicObject
     {
         private readonly SettingsRepository _SettRepo;
         private readonly SettingsPropertyName _SettPropName;
-        private readonly SettingsContext _Context;
+        private readonly TSETT _Context;
 
-        internal DynamicSettingsObject(SettingsRepository settRepo, SettingsPropertyName root, SettingsContext context)
+        internal DynamicSettingsObject(SettingsRepository settRepo, SettingsPropertyName root, TSETT context)
         {
             _SettRepo = settRepo;
             _SettPropName = root;
@@ -27,7 +27,7 @@ namespace MPSettings.Dynamic
         {
             if (_SettRepo.HasSettingsPropertyName(_SettPropName + binder.Name))
             {
-                result = new DynamicSettingsObject(_SettRepo, _SettPropName + binder.Name, _Context);
+                result = new DynamicSettingsObject<TSETT>(_SettRepo, _SettPropName + binder.Name, _Context);
                 return true;
             }
             else
@@ -39,7 +39,7 @@ namespace MPSettings.Dynamic
 
         public override bool TryConvert(ConvertBinder binder, out object result)
         {
-            SettingsPropertyValue obj = _SettRepo.GetPropertyValue(new SettingsProperty(_SettPropName, binder.ReturnType, new SettingsContext(_Context)));
+            SettingsPropertyValue obj = _SettRepo.GetPropertyValue(_Context, new SettingsProperty(_SettPropName, binder.ReturnType,null));
 
             if (obj != null)
             {

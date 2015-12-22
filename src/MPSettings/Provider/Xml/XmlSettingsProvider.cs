@@ -17,20 +17,20 @@ namespace MPSettings.Provider.Xml
 
         private XmlSettingsProvider()
         {
-            
+
         }
 
         public override void Initialize(IReadOnlyDictionary<string, object> namevalue)
         {
             object datastream = namevalue["dataStream"];
 
-            if(datastream ==null)
+            if (datastream == null)
                 throw new Exception(); //MP: work here
 
-            using (Stream xmlStream = datastream as Stream)
-            {
-                XDoc = XDocument.Load(xmlStream);
-            }
+            Stream xmlStream = datastream as Stream;
+            xmlStream.Seek(0, SeekOrigin.Begin);
+
+            XDoc = XDocument.Load(xmlStream);
         }
 
         private XElement GetElement(SettingsPropertyName propName)
@@ -54,7 +54,7 @@ namespace MPSettings.Provider.Xml
 
                 if (elem != null)
                 {
-                    yield return new SettingsPropertyValue(prop) {SerializedValue = elem.Value};
+                    yield return new SettingsPropertyValue(prop) { SerializedValue = elem.Value };
                 }
             }
         }

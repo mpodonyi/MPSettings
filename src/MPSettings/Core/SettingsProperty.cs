@@ -23,7 +23,7 @@ namespace MPSettings.Core
         public virtual SettingsPropertyName PropertyName { get; private set; }
         public virtual Type PropertyType { get; private set; }
 
-        public virtual SettingsContext Context { get; private set; }
+        public virtual SettingsContext Context { get; internal set; }
 
 
         //public virtual bool IsUserProp { get; set; }

@@ -9,38 +9,55 @@ namespace MPSettings.Core
 {
     internal class SettingsRepository
     {
+        private readonly SettingsProviderList _spl;
+        private readonly SettingsProviderStrategyCollectionDictionary _spsc;
         private readonly HashSet<ISettingsProvider> IsInitialized = new HashSet<ISettingsProvider>();
 
-        private readonly SettingsProviderList ApplicationSettingsProvider;
-
-        internal SettingsRepository(SettingsProviderList provider)
+        internal SettingsRepository(SettingsProviderList spl, SettingsProviderStrategyCollectionDictionary spsc)
         {
-            ApplicationSettingsProvider = provider;
+            _spsc = spsc;
+            _spl = spl;
         }
 
-        private IEnumerable<ISettingsProvider> GetOrderedProviders()
-        {
-            foreach (var provider in ApplicationSettingsProvider)
-            {
-                if (!IsInitialized.Contains(provider))
-                {
-                    provider.Initialize(new ReadOnlyDictionary<string, object>(SettingsProviders._InitValues)); //MP: implement loading from xml file
-                    IsInitialized.Add(provider);
-                }
 
-                yield return provider;
+        private IEnumerable<SettingsProperty> GetWithContext(IEnumerable<SettingsProperty> props, SettingsContext context)
+        {
+            foreach (SettingsProperty prop in props)
+            {
+                prop.Context = context;
+                yield return prop;
             }
         }
 
-        internal IEnumerable<SettingsPropertyValue> GetPropertyValues(IEnumerable<SettingsProperty> propInfos)
+        private IEnumerable<ISettingsProvider> GetProviders()
         {
+            foreach (var prov in _spl)
+            {
+                if (!IsInitialized.Contains(prov))
+                {
+                    prov.Initialize(new ReadOnlyDictionary<string, object>(SettingsProviders._InitValues)); //MP: implement loading from xml file
+                    IsInitialized.Add(prov);
+                }
+
+                yield return prov;
+            }
+        }
+
+
+        internal IEnumerable<SettingsPropertyValue> GetPropertyValues<TSETT>(TSETT settinngsProp, IEnumerable<SettingsProperty> propInfos) 
+        {
+            SettingsProviderStrategyCollectionBase<TSETT> spsc = _spsc.GetSPSC<TSETT>();
+            
+
             List<SettingsProperty> properties = propInfos.ToList();
             List<SettingsPropertyValue> retval = new List<SettingsPropertyValue>();
 
 
-            foreach (var provider in GetOrderedProviders())
+
+
+            foreach (Tuple<ISettingsProvider, SettingsContext> providerTuple in spsc.GetProviderAndContext(settinngsProp, GetProviders()))
             {
-                retval.AddRange(provider.GetPropertyValues(properties));
+                retval.AddRange(providerTuple.Item1.GetPropertyValues(GetWithContext(properties, providerTuple.Item2)));
 
                 if (properties.Count == retval.Count)
                     break;
@@ -48,25 +65,28 @@ namespace MPSettings.Core
                 properties = properties.Except(retval.Select(obj => obj.SettingsProperty)).ToList();
             }
 
+
+            //foreach (var provider in GetOrderedProviders())
+            //{
+            //    retval.AddRange(provider.GetPropertyValues(properties));
+
+            //    if (properties.Count == retval.Count)
+            //        break;
+
+            //    properties = properties.Except(retval.Select(obj => obj.SettingsProperty)).ToList();
+            //}
+
             return retval;
         }
 
-        internal SettingsPropertyValue GetPropertyValue(SettingsProperty propInfo)
+        internal SettingsPropertyValue GetPropertyValue<TSETT>(TSETT settinngsProp, SettingsProperty propInfo)
         {
-            foreach (var provider in GetOrderedProviders())
-            {
-                var retval = provider.GetPropertyValues(new[] { propInfo }).SingleOrDefault();
-
-                if (retval != null)
-                    return retval;
-            }
-
-            return null;
+            return GetPropertyValues(settinngsProp, new[] {propInfo}).FirstOrDefault();
         }
 
         internal bool HasSettingsPropertyName(SettingsPropertyName settPropName)
         {
-            foreach (var provider in GetOrderedProviders())
+            foreach (var provider in GetProviders())
             {
                 if (provider.HasPath(settPropName))
                     return true;

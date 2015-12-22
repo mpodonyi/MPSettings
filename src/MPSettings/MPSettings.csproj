@@ -43,16 +43,18 @@
     <Compile Include="Core\SettingsProperty.cs" />
     <Compile Include="Provider\SettingsProviderBase.cs" />
     <Compile Include="Provider\SettingsProviderList.cs" />
+    <Compile Include="Provider\SettingsProviderStrategy.cs" />
     <Compile Include="Provider\Xml\XmlSettingsProvider.cs" />
     <Compile Include="Utils\ObjectDictionary.cs" />
     <Compile Include="Utils\Reflector.cs" />
-    <Compile Include="SettingsManager.cs" />
+    <Compile Include="SettImpl.cs" />
     <Compile Include="SettingsProviders.cs" />
     <Compile Include="Utils\PathHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>$(SolutionDir)MPSettings.Tools.ProjectBuilder\bin\Debug\MPSettings.Tools.ProjectBuilder.exe $(ProjectPath) $(SolutionDir)MPSettings.Net\MPSettings.Net.csproj</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
