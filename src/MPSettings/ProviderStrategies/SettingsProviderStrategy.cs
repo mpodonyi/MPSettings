@@ -4,13 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
-using System.Threading.Tasks;
 using MPSettings.Core;
-using MPSettings.Provider.Xml;
+using MPSettings.Provider;
 
-namespace MPSettings.Provider
+namespace MPSettings.ProviderStrategies
 {
     public sealed class SettingsProviderStrategyCollectionDictionary
     {
@@ -79,7 +76,7 @@ namespace MPSettings.Provider
         }
 
 
-        public IEnumerable<Tuple<ISettingsProvider, SettingsContext>> GetProviderAndContext(TSettContext obj,IEnumerable<ISettingsProvider> spl)
+        internal IEnumerable<Tuple<ISettingsProvider, SettingsContext>> GetProviderAndContext(TSettContext obj,IEnumerable<ISettingsProvider> spl)
         {
             Dictionary<object,object> whatever=new Dictionary<object, object>();
 

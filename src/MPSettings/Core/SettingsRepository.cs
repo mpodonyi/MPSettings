@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using MPSettings.Provider;
+using MPSettings.ProviderStrategies;
 
 namespace MPSettings.Core
 {

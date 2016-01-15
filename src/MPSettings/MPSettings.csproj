@@ -43,7 +43,7 @@
     <Compile Include="Core\SettingsProperty.cs" />
     <Compile Include="Provider\SettingsProviderBase.cs" />
     <Compile Include="Provider\SettingsProviderList.cs" />
-    <Compile Include="Provider\SettingsProviderStrategy.cs" />
+    <Compile Include="ProviderStrategies\SettingsProviderStrategy.cs" />
     <Compile Include="Provider\Xml\XmlSettingsProvider.cs" />
     <Compile Include="Utils\ObjectDictionary.cs" />
     <Compile Include="Utils\Reflector.cs" />

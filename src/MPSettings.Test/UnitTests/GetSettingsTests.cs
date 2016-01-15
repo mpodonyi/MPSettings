@@ -27,6 +27,45 @@ namespace MPSettings.Test.UnitTests
 
 
 
+
+
+    public class GetSettingsWithContextTests
+    {
+        static GetSettingsWithContextTests()
+        {
+            FileStream obj = File.OpenRead(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.config"));
+
+            SettingsProviders.AddProviderInitValue("dataStream", obj);
+        }
+
+
+        public class MySett
+        {
+            public int UserId { get; set; }
+        }
+
+        public class MySett2
+        {
+            public int UserId { get; set; }
+        }
+
+
+        [Fact]
+        public void Settings_GetPOCO_Test()
+        {
+            var setman = SettingsManager.Create<MySett>();
+
+            TestSetting set = setman.GetSettings<TestSetting>(new MySett { UserId = 55 });
+
+            set.Foo.Should().Be(6);
+            set.Bar.Should().Be("Mike");
+            set.InnerTest.InnerFoo.Should().Be("Mike2");
+        }
+
+    }
+
+
+
     public class GetSettingsTests
     {
         static GetSettingsTests()
@@ -49,6 +88,9 @@ namespace MPSettings.Test.UnitTests
             set.Bar.Should().Be("Mike");
             set.InnerTest.InnerFoo.Should().Be("Mike2");
         }
+
+
+
 
 
 

@@ -7,6 +7,7 @@ using MPSettings.Provider;
 using MPSettings.Core;
 using System.Reflection;
 using MPSettings.Dynamic;
+using MPSettings.ProviderStrategies;
 using MPSettings.Utils;
 
 namespace MPSettings
@@ -19,7 +20,6 @@ namespace MPSettings
                 ? new SettingsProviderList {SettingsProviders.Providers.DefaultProvider}
                 : SettingsProviders.Providers;
 
-
             SettingsProviderStrategyCollectionDictionary spsc = SettingsProviderStrategyCollectionDictionary.Instance;
 
             return new SettImpl<object>(spl,spsc);
@@ -30,7 +30,6 @@ namespace MPSettings
             SettingsProviderList spl = SettingsProviders.Providers.Count == 0
                ? new SettingsProviderList { SettingsProviders.Providers.DefaultProvider }
                : SettingsProviders.Providers;
-
 
             SettingsProviderStrategyCollectionDictionary spsc = SettingsProviderStrategyCollectionDictionary.Instance;
 
