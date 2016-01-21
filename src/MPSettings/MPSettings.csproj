@@ -39,18 +39,24 @@
     <Compile Include="Core\SettingsRepository.cs" />
     <Compile Include="Dynamic\DynamicSettingsObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProviderStrategies\Implementations\SimpleSettingsProviderStrategy.cs" />
+    <Compile Include="ProviderStrategies\SettingsProviderStrategyCollection.cs" />
+    <Compile Include="ProviderStrategies\SettingsProviderStrategyItem.cs" />
     <Compile Include="Provider\ISettingsProvider.cs" />
     <Compile Include="Core\SettingsProperty.cs" />
     <Compile Include="Provider\SettingsProviderBase.cs" />
     <Compile Include="Provider\SettingsProviderList.cs" />
     <Compile Include="ProviderStrategies\SettingsProviderStrategy.cs" />
     <Compile Include="Provider\Xml\XmlSettingsProvider.cs" />
+    <Compile Include="SettingsManager.cs" />
+    <Compile Include="SettingsProviderStrategies.cs" />
     <Compile Include="Utils\ObjectDictionary.cs" />
     <Compile Include="Utils\Reflector.cs" />
     <Compile Include="SettImpl.cs" />
     <Compile Include="SettingsProviders.cs" />
     <Compile Include="Utils\PathHelper.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

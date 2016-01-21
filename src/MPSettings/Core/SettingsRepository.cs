@@ -11,10 +11,10 @@ namespace MPSettings.Core
     internal class SettingsRepository
     {
         private readonly SettingsProviderList _spl;
-        private readonly SettingsProviderStrategyCollectionDictionary _spsc;
+        private readonly SettingsProviderStrategyCollection _spsc;
         private readonly HashSet<ISettingsProvider> IsInitialized = new HashSet<ISettingsProvider>();
 
-        internal SettingsRepository(SettingsProviderList spl, SettingsProviderStrategyCollectionDictionary spsc)
+        internal SettingsRepository(SettingsProviderList spl, SettingsProviderStrategyCollection spsc)
         {
             _spsc = spsc;
             _spl = spl;
@@ -44,19 +44,58 @@ namespace MPSettings.Core
             }
         }
 
+		//private IReadOnlyList<T> ToReadOnlyList<T>(IEnumerable<T> list)
+		//{
+		//	return new ReadOnlyCollection<T>(list.ToList());
+		//}
+
+
+		//internal IEnumerable<Tuple<ISettingsProvider, SettingsContext>> GetProviderAndContext(TSettContext obj, IEnumerable<ISettingsProvider> spl)
+		//{
+		//	foreach (SettingsProviderStrategyItem<TSettContext> sPS in GetSettingsProviderStrategyItems(ToReadOnlyList(spl), obj))
+		//	{
+		//		SettingsContext retSettCtx = new SettingsContext();
+		//		foreach (var keyvalue in sPS.GetKeyValue(obj))
+		//		{
+		//			retSettCtx.Add(keyvalue.Key, keyvalue.Value);
+		//		}
+
+		//		yield return Tuple.Create(sPS.SettProvider, retSettCtx);
+
+		//	}
+		//}
+
+		private IReadOnlyList<T> ToReadOnlyList<T>(IEnumerable<T> list)
+		{
+			return new ReadOnlyCollection<T>(list.ToList());
+		}
+
+
+		private IEnumerable<Tuple<ISettingsProvider, SettingsContext>> GetProviderAndContext<TSETT>(TSETT obj)
+		{
+			SettingsProviderStrategy<TSETT> spsc = _spsc.Get<TSETT>();
+			IEnumerable<ISettingsProvider> spl = GetProviders();
+
+			foreach (SettingsProviderStrategyItem<TSETT> sPS in spsc.GetSettingsProviderStrategyItems(ToReadOnlyList(spl), obj))
+			{
+				SettingsContext retSettCtx = new SettingsContext();
+				foreach (var keyvalue in sPS.GetKeyValue(obj))
+				{
+					retSettCtx.Add(keyvalue.Key, keyvalue.Value);
+				}
+
+				yield return Tuple.Create(sPS.SettProvider, retSettCtx);
+
+			}
+		}
+
 
         internal IEnumerable<SettingsPropertyValue> GetPropertyValues<TSETT>(TSETT settinngsProp, IEnumerable<SettingsProperty> propInfos) 
         {
-            SettingsProviderStrategyCollectionBase<TSETT> spsc = _spsc.GetSPSC<TSETT>();
-            
-
             List<SettingsProperty> properties = propInfos.ToList();
             List<SettingsPropertyValue> retval = new List<SettingsPropertyValue>();
 
-
-
-
-            foreach (Tuple<ISettingsProvider, SettingsContext> providerTuple in spsc.GetProviderAndContext(settinngsProp, GetProviders()))
+            foreach (Tuple<ISettingsProvider, SettingsContext> providerTuple in GetProviderAndContext(settinngsProp))
             {
                 retval.AddRange(providerTuple.Item1.GetPropertyValues(GetWithContext(properties, providerTuple.Item2)));
 

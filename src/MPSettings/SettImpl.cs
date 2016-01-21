@@ -12,34 +12,7 @@ using MPSettings.Utils;
 
 namespace MPSettings
 {
-    public static  class SettingsManager
-    {
-        public static ISettBasic Create()
-        {
-            SettingsProviderList spl = SettingsProviders.Providers.Count == 0
-                ? new SettingsProviderList {SettingsProviders.Providers.DefaultProvider}
-                : SettingsProviders.Providers;
-
-            SettingsProviderStrategyCollectionDictionary spsc = SettingsProviderStrategyCollectionDictionary.Instance;
-
-            return new SettImpl<object>(spl,spsc);
-        }
-
-        public static ISettWithContext<TSETT> Create<TSETT>() where TSETT : class
-        {
-            SettingsProviderList spl = SettingsProviders.Providers.Count == 0
-               ? new SettingsProviderList { SettingsProviders.Providers.DefaultProvider }
-               : SettingsProviders.Providers;
-
-            SettingsProviderStrategyCollectionDictionary spsc = SettingsProviderStrategyCollectionDictionary.Instance;
-
-            return new SettImpl<TSETT>(spl,spsc);
-        }
-
-
-    }
-
-    public interface ISettBasic
+	public interface ISettBasic
     {
         dynamic GetSettingsDynamic();
         T GetSettings<T>() where T : new();
@@ -63,7 +36,7 @@ namespace MPSettings
         private readonly SettingsRepository SetRepo;
         private readonly ObjectDictionary ObjDict;
 
-        internal SettImpl(SettingsProviderList spl, SettingsProviderStrategyCollectionDictionary spsc)
+        internal SettImpl(SettingsProviderList spl, SettingsProviderStrategyCollection spsc)
         {
             ObjDict = new ObjectDictionary();
 
