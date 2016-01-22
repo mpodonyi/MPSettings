@@ -1,3 +1,4 @@
+using MPSettings.Internal;
 using MPSettings.Provider;
 using MPSettings.ProviderStrategies;
 
@@ -7,24 +8,18 @@ namespace MPSettings
 	{
 		public static ISettBasic Create()
 		{
-			SettingsProviderList spl = SettingsProviders.Providers.Count == 0
-				? new SettingsProviderList {SettingsProviders.Providers.DefaultProvider}
-				: SettingsProviders.Providers;
-
+			SettingsProviderManager spm = SettingsProviders.GetProviderManager();
 			SettingsProviderStrategyCollection spsc = SettingsProviderStrategies.Strategies;
 
-			return new SettImpl<object>(spl,spsc);
+			return new SettImpl<object>(spm,spsc);
 		}
 
 		public static ISettWithContext<TSETT> Create<TSETT>() where TSETT : class
 		{
-			SettingsProviderList spl = SettingsProviders.Providers.Count == 0
-				? new SettingsProviderList { SettingsProviders.Providers.DefaultProvider }
-				: SettingsProviders.Providers;
-
+			SettingsProviderManager spm = SettingsProviders.GetProviderManager();
 			SettingsProviderStrategyCollection spsc = SettingsProviderStrategies.Strategies;
 
-			return new SettImpl<TSETT>(spl,spsc);
+			return new SettImpl<TSETT>(spm,spsc);
 		}
 
 
