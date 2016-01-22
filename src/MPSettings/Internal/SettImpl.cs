@@ -25,12 +25,12 @@ namespace MPSettings.Internal
 		}
 
 
-		private IEnumerable<SettingsProperty> GetSettingsProperties(object baseObject, Type type, SettingsPropertyName path, PropertyInfo basePropInfo)
+		private IEnumerable<SettingsProperty> GetSettingsProperties(object baseObject, Type type, SettingsPropertyName path, PropertyInfo basePropInfo, object context)
 		{
 			if (Reflector.HasParameterLessDefaultConstructor(type))
 			{
 				object obj = Activator.CreateInstance(type);
-				ObjDict.Add(path, obj);
+				ObjDict.Add(path, context, obj);
 
 				if (baseObject != null)
 				{
@@ -51,7 +51,7 @@ namespace MPSettings.Internal
 					}
 					else
 					{
-						foreach (var settingsProperty in GetSettingsProperties(obj, tuple.Item2, path + tuple.Item1, tuple.Item3))
+						foreach (var settingsProperty in GetSettingsProperties(obj, tuple.Item2, path + tuple.Item1, tuple.Item3, context))
 						{
 							yield return settingsProperty;
 						}
@@ -85,16 +85,16 @@ namespace MPSettings.Internal
 		public T GetSettings<T>(TSETT context) where T : new()
 		{
 
-			foreach (var settingsPropertyValue in SetRepo.GetPropertyValues(context, GetSettingsProperties(null, typeof(T), SettingsPropertyName.Root, null)))
+			foreach (var settingsPropertyValue in SetRepo.GetPropertyValues(context, GetSettingsProperties(null, typeof(T), SettingsPropertyName.Root, null, context)))
 			{
 				PropertyInfo SettAccessor = settingsPropertyValue.SettingsProperty.InternalContext["__SettAccessor"] as PropertyInfo;
 
-				object obj = ObjDict.Get(settingsPropertyValue.SettingsProperty.PropertyName.Path);
+				object obj = ObjDict.Get(settingsPropertyValue.SettingsProperty.PropertyName.Path, context);
 
 				SettAccessor.SetValue(obj, settingsPropertyValue.PropertyValue);
 			}
 
-			return (T)ObjDict.Get(SettingsPropertyName.Root);
+			return (T)ObjDict.Get(SettingsPropertyName.Root, context);
 		}
 
 

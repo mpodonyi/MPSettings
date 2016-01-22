@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using FluentAssertions;
-using MPSettings.Test.TestData.GetSettings;
+using MPSettings.Test.TestData.GetSettingsWithContext;
 using Xunit;
 
 namespace MPSettings.Test.UnitTests
@@ -10,31 +10,31 @@ namespace MPSettings.Test.UnitTests
 	{
 		public GetSettingsWithContextTests()
 		{
-			ConfigureProvider(@"TestData\GetSettings\settings.config");
+			ConfigureProvider(@"TestData\GetSettingsWithContext\settings.config");
 		}
 
 
-		public class MySett
-		{
-			public int UserId { get; set; }
-		}
 
-		public class MySett2
-		{
-			public int UserId { get; set; }
-		}
-
+	
 
 		[Fact]
 		public void Settings_GetPOCO_Test()
 		{
-			var setman = SettingsManager.Create<MySett>();
+			var setman = SettingsManager.Create<TestContext1>();
 
-			TestSetting set = setman.GetSettings<TestSetting>(new MySett { UserId = 55 });
+			TestSetting set = setman.GetSettings<TestSetting>(new TestContext1 { UserId = 1 });
+
+			set.Foo.Should().Be(6);
+			set.Bar.Should().Be("Mike1");
+			set.InnerTest.InnerFoo.Should().Be("Mike3");
+
+
+			TestSetting set2 = setman.GetSettings<TestSetting>(new TestContext1 { UserId = 2 });
 
 			set.Foo.Should().Be(6);
 			set.Bar.Should().Be("Mike");
 			set.InnerTest.InnerFoo.Should().Be("Mike2");
+
 		}
 
 	}

@@ -31,41 +31,7 @@ namespace MPSettings.Core
 			}
 		}
 
-		//private IEnumerable<ISettingsProvider> GetProviders()
-		//{
-		//	foreach (var prov in _spl)
-		//	{
-		//		if (!IsInitialized.Contains(prov))
-		//		{
-		//			prov.Initialize(new ReadOnlyDictionary<string, object>(SettingsProviders._InitValues)); //MP: implement loading from xml file
-		//			IsInitialized.Add(prov);
-		//		}
-
-		//		yield return prov;
-		//	}
-		//}
-
-		//private IReadOnlyList<T> ToReadOnlyList<T>(IEnumerable<T> list)
-		//{
-		//	return new ReadOnlyCollection<T>(list.ToList());
-		//}
-
-
-		//internal IEnumerable<Tuple<ISettingsProvider, SettingsContext>> GetProviderAndContext(TSettContext obj, IEnumerable<ISettingsProvider> spl)
-		//{
-		//	foreach (SettingsProviderStrategyItem<TSettContext> sPS in GetSettingsProviderStrategyItems(ToReadOnlyList(spl), obj))
-		//	{
-		//		SettingsContext retSettCtx = new SettingsContext();
-		//		foreach (var keyvalue in sPS.GetKeyValue(obj))
-		//		{
-		//			retSettCtx.Add(keyvalue.Key, keyvalue.Value);
-		//		}
-
-		//		yield return Tuple.Create(sPS.SettProvider, retSettCtx);
-
-		//	}
-		//}
-
+	
 		private IReadOnlyList<T> ToReadOnlyList<T>(IEnumerable<T> list)
 		{
 			return new ReadOnlyCollection<T>(list.ToList());

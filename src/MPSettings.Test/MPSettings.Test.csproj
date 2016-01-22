@@ -87,7 +87,8 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestBase.cs" />
-    <Compile Include="TestData\GetSettings\InnerTestSetting.cs" />
+    <Compile Include="TestData\GetSettingsWithContext\TestContext.cs" />
+    <Compile Include="TestData\GetSettingsWithContext\TestSetting.cs" />
     <Compile Include="TestData\GetSettings\TestSetting.cs" />
     <Compile Include="UnitTests\GetSettingsWithContextTests.cs" />
     <Compile Include="UnitTests\SettingsPropertyValueTests.cs" />
@@ -96,6 +97,10 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="TestData\GetSettingsWithContext\settings.config">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="TestData\GetSettings\settings.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>

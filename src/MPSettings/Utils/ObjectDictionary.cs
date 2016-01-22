@@ -9,18 +9,18 @@ namespace MPSettings.Utils
 {
     internal class ObjectDictionary
     {
-        private readonly Dictionary<SettingsPropertyName, object> _InnerDict = new Dictionary<SettingsPropertyName, object>();
+		private readonly Dictionary<Tuple<SettingsPropertyName, object>, object> _InnerDict = new Dictionary<Tuple<SettingsPropertyName, object>, object>();
 
 
-        public void Add(SettingsPropertyName settName, object obj) 
+        public void Add(SettingsPropertyName settName, object context, object obj) 
         {
-            _InnerDict.Add(settName, obj);
+            _InnerDict.Add(Tuple.Create(settName,context), obj);
         }
 
 
-        internal object Get(SettingsPropertyName settName)
+		internal object Get(SettingsPropertyName settName, object context)
         {
-            return _InnerDict[settName];
+			return _InnerDict[Tuple.Create(settName, context)];
         }
     }
 }

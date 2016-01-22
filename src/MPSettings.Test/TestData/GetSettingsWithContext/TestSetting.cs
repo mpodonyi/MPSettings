@@ -1,4 +1,6 @@
-﻿namespace MPSettings.Test.TestData.GetSettings
+﻿using MPSettings.Test.TestData.GetSettings;
+
+namespace MPSettings.Test.TestData.GetSettingsWithContext
 {
 	public class TestSetting
 	{
@@ -7,10 +9,5 @@
 		public string Bar { get; set; }
 
 		public InnerTestSetting InnerTest { get; set; }
-	}
-
-	public class InnerTestSetting
-	{
-		public string InnerFoo { get; set; }
 	}
 }
