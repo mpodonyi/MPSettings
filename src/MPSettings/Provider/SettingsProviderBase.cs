@@ -15,7 +15,7 @@ namespace MPSettings.Provider
 
         //public abstract void SetPropertyValues(SettingsContext context, IEnumerable<SettingsPropertyValue> collection);
 
-        public abstract bool HasPath(SettingsPropertyName path);
+		//public abstract bool HasPath(SettingsPropertyName path);
 
     }
 }

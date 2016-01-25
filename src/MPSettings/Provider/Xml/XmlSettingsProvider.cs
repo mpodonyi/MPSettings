@@ -34,67 +34,31 @@ namespace MPSettings.Provider.Xml
 		}
 
 
-		private void GetElements(SettingsPropertyName[] pathparts, int index, XElement searchelement, List<XElement> returnElement)
+		private void ScanElements(SettingsPropertyName[] pathparts, int index, XElement searchelement, List<XElement> returnElement)
 		{
-			XElement elem = XDoc.Root;
-
-			for (int index = 1; index < prop.PropertyName.PathParts.Length; index++)
+			if (index == pathparts.Length - 1)
 			{
-				string part = prop.PropertyName.PathParts[index].ToString();
-				elem = elem.Element(part);
-
-				if (elem == null)
-					return null;
-
-				SettingsContext context = prop.Context;
-
-				if (context != null)
-				{
-					foreach (var keyvaluepair in context)
-					{
-						var attr = elem.Attribute(keyvaluepair.Key.ToString());
-						if (attr == null)
-							return null;
-
-						if (attr.Value != keyvaluepair.Value.ToString())
-							return null;
-					}
-
-				}
-
+				returnElement.AddRange(searchelement.Elements(pathparts[index].ToString()));
 			}
-
-
-		}
-
-
-
-		private XElement GetElement(SettingsProperty prop)
-		{
-			List<XElement> returnElement=new List<XElement>();
-
-			GetElements(prop.PropertyName.PathParts, 0, XDoc.Root, returnElement);
-
-			XElement retVal = null;
-
-			SettingsContext context = prop.Context;
-			foreach (var elem in returnElement)
+			else if (index >= pathparts.Length)
 			{
-				foreach (var keyvaluepair in context)
-				{
-					var attr = elem.Attribute(keyvaluepair.Key.ToString());
-					if (attr == null)
-						return null;
-
-					if (attr.Value != keyvaluepair.Value.ToString())
-						return null;
-				}
-				
+				return;
 			}
-
+			else
+			{
+				foreach (var xPathElemenet in searchelement.Elements(pathparts[index].ToString()))
+				{
+					ScanElements(pathparts, index + 1, xPathElemenet, returnElement);
+				}
+			}
+			
+			
 			
 
-			//XElement elem = XDoc.Root;
+
+
+
+
 
 			//for (int index = 1; index < prop.PropertyName.PathParts.Length; index++)
 			//{
@@ -111,7 +75,7 @@ namespace MPSettings.Provider.Xml
 			//		foreach (var keyvaluepair in context)
 			//		{
 			//			var attr = elem.Attribute(keyvaluepair.Key.ToString());
-			//			if(attr == null)
+			//			if (attr == null)
 			//				return null;
 
 			//			if (attr.Value != keyvaluepair.Value.ToString())
@@ -122,14 +86,60 @@ namespace MPSettings.Provider.Xml
 
 			//}
 
-			return elem;
+
+		}
+
+
+
+		private XElement HasAllAttributes(SettingsProperty prop)
+		{
+			List<XElement> returnElements=new List<XElement>();
+
+			ScanElements(prop.PropertyName.PathParts, 0, XDoc.Root, returnElements);
+
+			XElement retVal = null;
+
+			SettingsContext context = prop.Context;
+
+			foreach (var elem in returnElements)
+			{
+				if (elem.Attributes().Count() != context.Count)
+					continue;
+
+				bool hasAllKeyValues = true;
+
+				foreach (var keyvaluepair in context)
+				{
+					var attr = elem.Attribute(keyvaluepair.Key.ToString());
+					if (attr == null)
+					{
+						hasAllKeyValues = false;
+						break;
+					}
+
+					if (attr.Value != keyvaluepair.Value.ToString())
+					{
+						hasAllKeyValues = false;
+						break;
+					}
+				}
+
+
+				if (retVal != null && hasAllKeyValues)
+					throw new Exception("Duplicate match");
+
+				if (hasAllKeyValues)
+					retVal = elem;
+			}
+
+			return retVal;
 		}
 
 		public override IEnumerable<SettingsPropertyValue> GetPropertyValues(IEnumerable<SettingsProperty> collection)
 		{
 			foreach (var prop in collection)
 			{
-				XElement elem = GetElement(prop);
+				XElement elem = HasAllAttributes(prop);
 
 				if (elem != null)
 				{
@@ -138,11 +148,11 @@ namespace MPSettings.Provider.Xml
 			}
 		}
 
-		public override bool HasPath(SettingsPropertyName path)
-		{
-			return true; //MP: work here
-			//return GetElement(path) != null;
-		}
+		//public override bool HasPath(SettingsPropertyName path)
+		//{
+		//	return true; //MP: work here
+		//	//return GetElement(path) != null;
+		//}
 
 		internal static XmlSettingsProvider CreateXmlSettingsProvider()
 		{

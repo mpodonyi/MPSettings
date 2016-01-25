@@ -9,6 +9,6 @@ namespace MPSettings.Provider
 
         IEnumerable<SettingsPropertyValue> GetPropertyValues(IEnumerable<SettingsProperty> collection);
 
-        bool HasPath(SettingsPropertyName path);
+		//bool HasPath(SettingsPropertyName path);
     }
 }

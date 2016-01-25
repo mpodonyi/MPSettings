@@ -91,15 +91,15 @@ namespace MPSettings.Core
 			return GetPropertyValues(settinngsProp, new[] {propInfo}).FirstOrDefault();
 		}
 
-		internal bool HasSettingsPropertyName(SettingsPropertyName settPropName)
-		{
-			foreach (var provider in _spl.GetProviders())
-			{
-				if (provider.HasPath(settPropName))
-					return true;
-			}
+		//internal bool HasSettingsPropertyName(SettingsPropertyName settPropName)
+		//{
+		//	foreach (var provider in _spl.GetProviders())
+		//	{
+		//		if (provider.HasPath(settPropName))
+		//			return true;
+		//	}
 
-			return false;
-		}
+		//	return false;
+		//}
 	}
 }

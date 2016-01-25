@@ -31,9 +31,9 @@ namespace MPSettings.Test.UnitTests
 
 			TestSetting set2 = setman.GetSettings<TestSetting>(new TestContext1 { UserId = 2 });
 
-			set.Foo.Should().Be(6);
-			set.Bar.Should().Be("Mike");
-			set.InnerTest.InnerFoo.Should().Be("Mike2");
+			set2.Foo.Should().Be(6);
+			set2.Bar.Should().Be("Mike");
+			set2.InnerTest.InnerFoo.Should().Be("Mike4");
 
 		}
 

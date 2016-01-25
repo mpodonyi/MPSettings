@@ -39,7 +39,7 @@ namespace MPSettings.Core
 			get
 			{
 				List<SettingsPropertyName> retval = new List<SettingsPropertyName>();
-				retval.Add(Root);
+				//retval.Add(Root);
 				foreach (string split in _Name.Split(new[] { '.', '^' }, StringSplitOptions.RemoveEmptyEntries))
 				{
 					retval.Add(split);

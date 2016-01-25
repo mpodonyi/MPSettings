@@ -25,16 +25,21 @@ namespace MPSettings.Dynamic
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            if (_SettRepo.HasSettingsPropertyName(_SettPropName + binder.Name))
-            {
-                result = new DynamicSettingsObject<TSETT>(_SettRepo, _SettPropName + binder.Name, _Context);
-                return true;
-            }
-            else
-            {
-                result = null;
-                return false;
-            }
+			result = new DynamicSettingsObject<TSETT>(_SettRepo, _SettPropName + binder.Name, _Context);
+			return true;
+
+
+
+			//if (_SettRepo.HasSettingsPropertyName(_SettPropName + binder.Name))
+			//{
+			//	result = new DynamicSettingsObject<TSETT>(_SettRepo, _SettPropName + binder.Name, _Context);
+			//	return true;
+			//}
+			//else
+			//{
+			//	result = null;
+			//	return false;
+			//}
         }
 
         public override bool TryConvert(ConvertBinder binder, out object result)

@@ -34,9 +34,12 @@ namespace MPSettings.Test.UnitTests
 			((string)set.Bar).Should().Be("Mike");
 			((string)set.InnerTest.InnerFoo).Should().Be("Mike2");
 
+			Action act = () => { var hhh = set.InnerWhatever.Whatever2; };
+			act.ShouldNotThrow();
+			
 
-			Action act = () => { var uu = set.InnerWhatever; };
-			act.ShouldThrow<Microsoft.CSharp.RuntimeBinder.RuntimeBinderException>();
+			Action act2 = () => { var uu = (string)set.InnerWhatever.Whatever2; };
+			act2.ShouldThrow<Microsoft.CSharp.RuntimeBinder.RuntimeBinderException>();
 
 
 		}
