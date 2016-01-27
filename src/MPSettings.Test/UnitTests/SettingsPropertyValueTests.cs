@@ -188,8 +188,8 @@ namespace MPSettings.Test.UnitTests
                 var SPV = new SettingsPropertyValue(new SettingsProperty("whatever", typeof(string), null));
                 SPV.SerializedValue = null;
                 //SPV.PropertyValue.Should().BeOfType<string>().Which.Should().BeNull();
-                SPV.PropertyValue.Should().BeOfType<string>().Which.Should().Be("");
-                //SPV.PropertyValue.Should().BeNull();
+                //SPV.PropertyValue.Should().BeOfType<string>().Which.Should().Be("");
+                SPV.PropertyValue.Should().BeNull();
             }
             {
                 var SPV = new SettingsPropertyValue(new SettingsProperty("whatever", typeof(string), null));
@@ -211,11 +211,7 @@ namespace MPSettings.Test.UnitTests
         }
 
 
-        private static readonly string CompareValueString = @"<?xml version=""1.0"" encoding=""utf-16""?>
-                                                    <Test xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-                                                    <foo>44</foo>
-                                                    <Bar>3</Bar>
-                                                </Test>";
+        private static readonly string CompareValueString = @"<SettingsPropertyValueTests.Test xmlns='http://schemas.datacontract.org/2004/07/MPSettings.Test.UnitTests' xmlns:i='http://www.w3.org/2001/XMLSchema-instance'><Bar>3</Bar><foo>44</foo></SettingsPropertyValueTests.Test>";
         private static readonly XDocument CompareValue = XDocument.Parse(CompareValueString);
 
         [Fact]

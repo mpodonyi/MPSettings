@@ -54,6 +54,7 @@
     <Compile Include="Provider\Xml\XmlSettingsProvider.cs" />
     <Compile Include="SettingsManager.cs" />
     <Compile Include="SettingsProviderStrategies.cs" />
+    <Compile Include="Utils\Converter.cs" />
     <Compile Include="Utils\ObjectDictionary.cs" />
     <Compile Include="Utils\Reflector.cs" />
     <Compile Include="ISettWithContext.cs" />
