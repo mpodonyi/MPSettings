@@ -37,5 +37,16 @@ namespace MPSettings.Test.UnitTests
 
 		}
 
+		[Fact]
+		public void Settings_GetDynamic_Test()
+		{
+			dynamic set = SettingsManager.Create<TestContext1>().GetSettingsDynamic(new TestContext1 {UserId = 1});
+
+			((int)set.Foo).Should().Be(6);
+			((string)set.Bar).Should().Be("Mike1");
+			((string)set.InnerTest.InnerFoo).Should().Be("Mike3");
+
+		}
+
 	}
 }

@@ -90,9 +90,11 @@
     <Compile Include="TestData\GetSettingsWithContext\TestContext.cs" />
     <Compile Include="TestData\GetSettingsWithContext\TestSetting.cs" />
     <Compile Include="TestData\GetSettings\TestSetting.cs" />
+    <Compile Include="TestData\XmlSettingsProviderTests\TestSetting.cs" />
     <Compile Include="UnitTests\GetSettingsWithContextTests.cs" />
     <Compile Include="UnitTests\SettingsPropertyValueTests.cs" />
     <Compile Include="UnitTests\GetSettingsTests.cs" />
+    <Compile Include="UnitTests\XmlSettingsProviderTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -104,6 +106,10 @@
     <None Include="TestData\GetSettings\settings.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
+    </None>
+    <None Include="TestData\XmlSettingsProviderTests\settings.config">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

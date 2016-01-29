@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -143,10 +144,35 @@ namespace MPSettings.Provider.Xml
 
 				if (elem != null)
 				{
-					yield return new SettingsPropertyValue(prop) { SerializedValue = elem.Value };
+					var value = new SettingsPropertyValue(prop);
+
+					SetValue(value, elem);
+
+					yield return value;
 				}
 			}
 		}
+
+
+		private void SetValue(SettingsPropertyValue propval, XElement elem)
+		{
+			if (propval.SettingsProperty.PropertyType == typeof (IEnumerable))
+			{
+				if (propval.SettingsProperty.PropertyType == typeof (IDictionary<,>))
+				{
+
+				}
+				else
+				{
+					
+				}
+			}
+
+
+			propval.SerializedValue = elem.Value;
+		}
+
+
 
 		//public override bool HasPath(SettingsPropertyName path)
 		//{
